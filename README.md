@@ -8,4 +8,4 @@
 3. create your own database base on the [database dump](db.sql)
 4. connect the database by changing the [application.properties](src/main/resources/application.yml) file
 5. build & run
-6. available endpoints can be found at http://localhost:8080/endpoints.html
+6. available endpoints can be found at http://localhost:8080/swagger-ui/index.html
