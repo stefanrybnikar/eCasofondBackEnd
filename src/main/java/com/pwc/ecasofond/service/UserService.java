@@ -60,6 +60,13 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
             u.setDisplayName(user.getDisplayName());
             u.setEmail(user.getEmail());
             u.setUsername(user.getUsername());
+
+            if (u.getPassword().equals(user.getOldPassword())) {
+                u.setPassword(user.getPassword());
+            } else {
+                return null;
+            }
+
             return userRepository.save(u);
         }
 
