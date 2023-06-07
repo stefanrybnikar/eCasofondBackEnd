@@ -58,3 +58,8 @@ CREATE TABLE entries
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (type_id) REFERENCES entry_types (id)
 );
+
+INSERT INTO role_types (name, level, write)
+VALUES ('ADVISOR', 0, TRUE),
+       ('ADMIN', 1, TRUE),
+       ('USER', 2, FALSE);
