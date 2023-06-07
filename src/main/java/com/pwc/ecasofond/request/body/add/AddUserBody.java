@@ -8,6 +8,7 @@ public class AddUserBody extends Body {
     String displayName;
     String email;
     String username;
+    String password;
 
     public Long getCompanyId() {
         return companyId;
@@ -47,5 +48,13 @@ public class AddUserBody extends Body {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

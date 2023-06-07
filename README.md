@@ -9,3 +9,6 @@
 4. connect the database by changing the [application.properties](src/main/resources/application.yml) file
 5. build & run
 6. available endpoints can be found at http://localhost:8080/swagger-ui/index.html
+
+## Authors
+- [Lukáš Bien](https://github.com/4iwen)

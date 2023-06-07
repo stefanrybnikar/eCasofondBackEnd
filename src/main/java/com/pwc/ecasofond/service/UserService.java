@@ -45,6 +45,7 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
             u.setDisplayName(user.getDisplayName());
             u.setEmail(user.getEmail());
             u.setUsername(user.getUsername());
+            u.setPassword(user.getPassword());
             return userRepository.save(u);
         }
 
