@@ -5,6 +5,7 @@ import com.pwc.ecasofond.request.body.Body;
 public class AddUserBody extends Body {
     Long companyId;
     Long roleId;
+    Long professionId;
     String displayName;
     String email;
     String username;
@@ -56,5 +57,13 @@ public class AddUserBody extends Body {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getProfessionId() {
+        return professionId;
+    }
+
+    public void setProfessionId(Long professionId) {
+        this.professionId = professionId;
     }
 }

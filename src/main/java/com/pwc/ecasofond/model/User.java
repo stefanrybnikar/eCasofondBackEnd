@@ -51,4 +51,9 @@ public class User {
             nullable = false
     )
     private Long roleId;
+
+    @Column(
+            name = "profession_id"
+    )
+    private Long professionId;
 }

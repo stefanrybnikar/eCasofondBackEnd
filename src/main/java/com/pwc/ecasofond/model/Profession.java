@@ -13,8 +13,7 @@ public class Profession {
 
     @Column(
             name = "name",
-            unique = true,
-            nullable = false
+            unique = true
     )
     private String name;
 }

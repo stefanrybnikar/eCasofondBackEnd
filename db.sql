@@ -40,7 +40,7 @@ CREATE TABLE users
     display_name  VARCHAR(128) NOT NULL,
     company_id    BIGINT,
     role_id       BIGINT       NOT NULL,
-    profession_id BIGINT       NOT NULL,
+    profession_id BIGINT,
     FOREIGN KEY (company_id) REFERENCES companies (id),
     FOREIGN KEY (role_id) REFERENCES role_types (id),
     FOREIGN KEY (profession_id) REFERENCES profession_types (id)

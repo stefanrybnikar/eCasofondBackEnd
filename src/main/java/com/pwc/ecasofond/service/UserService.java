@@ -42,6 +42,7 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
         if (companyRepository.findById(user.getCompanyId()).isPresent()) {
             u.setCompanyId(user.getCompanyId());
             u.setRoleId(user.getRoleId());
+            u.setProfessionId(user.getProfessionId());
             u.setDisplayName(user.getDisplayName());
             u.setEmail(user.getEmail());
             u.setUsername(user.getUsername());
