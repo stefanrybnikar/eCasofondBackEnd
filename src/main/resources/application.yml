@@ -1,3 +1,7 @@
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ecasofond
@@ -9,3 +13,4 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: true

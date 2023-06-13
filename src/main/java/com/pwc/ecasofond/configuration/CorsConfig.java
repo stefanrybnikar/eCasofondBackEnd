@@ -1,4 +1,4 @@
-package com.pwc.ecasofond;
+package com.pwc.ecasofond.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

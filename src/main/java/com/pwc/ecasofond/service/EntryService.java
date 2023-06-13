@@ -1,21 +1,25 @@
 package com.pwc.ecasofond.service;
 
 import com.pwc.ecasofond.model.Entry;
+import com.pwc.ecasofond.repository.EntryRepository;
+import com.pwc.ecasofond.repository.EntryTypeRepository;
 import com.pwc.ecasofond.repository.UserRepository;
 import com.pwc.ecasofond.request.body.add.AddEntryBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryBody;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.pwc.ecasofond.repository.EntryRepository;
 
 import java.sql.Timestamp;
 
-@Component
+@org.springframework.stereotype.Service
 public class EntryService implements Service<Entry, AddEntryBody, UpdateEntryBody> {
-    @Autowired
-    private EntryRepository entryRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final EntryRepository entryRepository;
+    private final UserRepository userRepository;
+    private final EntryTypeRepository entryTypeRepository;
+
+    public EntryService(EntryRepository entryRepository, UserRepository userRepository, EntryTypeRepository entryTypeRepository) {
+        this.entryRepository = entryRepository;
+        this.userRepository = userRepository;
+        this.entryTypeRepository = entryTypeRepository;
+    }
 
     @Override
     public Iterable<Entry> getAll() {
@@ -29,43 +33,46 @@ public class EntryService implements Service<Entry, AddEntryBody, UpdateEntryBod
 
     @Override
     public Entry add(AddEntryBody entry) {
-        if (userRepository.findById(entry.getUserId()).isPresent()) {
-            Entry e = new Entry();
-            e.setUserId(entry.getUserId());
-            e.setTypeId(entry.getTypeId());
-            e.setDescription(entry.getDescription());
-            e.setHourCount(entry.getHourCount());
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            e.setCreated(now);
-            e.setUpdated(now);
-            return entryRepository.save(e);
-        }
+        if (!userRepository.existsById(entry.getUserId()))
+            return null;
 
-        return null;
+        if (!entryTypeRepository.existsById(entry.getTypeId()))
+            return null;
+
+        Entry e = new Entry();
+        e.setUserId(entry.getUserId());
+        e.setTypeId(entry.getTypeId());
+        e.setDescription(entry.getDescription());
+        e.setHourCount(entry.getHourCount());
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        e.setCreated(now);
+        e.setUpdated(now);
+        return entryRepository.save(e);
     }
 
     @Override
     public Entry update(UpdateEntryBody entry) {
-        if (entryRepository.findById(entry.getId()).isPresent()) {
-            Entry e = entryRepository.findById(entry.getId()).get();
-            e.setTypeId(entry.getTypeId());
-            e.setDescription(entry.getDescription());
-            e.setHourCount(entry.getHourCount());
-            e.setUpdated(new Timestamp(System.currentTimeMillis()));
-            return entryRepository.save(e);
-        }
+        if (!entryRepository.existsById(entry.getId()))
+            return null;
 
-        return null;
+        if (!entryTypeRepository.existsById(entry.getTypeId()))
+            return null;
+
+        Entry e = entryRepository.findById(entry.getId()).get();
+        e.setTypeId(entry.getTypeId());
+        e.setDescription(entry.getDescription());
+        e.setHourCount(entry.getHourCount());
+        e.setUpdated(new Timestamp(System.currentTimeMillis()));
+        return entryRepository.save(e);
     }
 
     @Override
     public Boolean delete(Long id) {
-        if (entryRepository.findById(id).isPresent()) {
-            Entry entry = entryRepository.findById(id).get();
-            entryRepository.delete(entry);
-            return true;
-        }
+        if (!entryRepository.existsById(id))
+            return false;
 
-        return false;
+        Entry entry = entryRepository.findById(id).get();
+        entryRepository.delete(entry);
+        return true;
     }
 }

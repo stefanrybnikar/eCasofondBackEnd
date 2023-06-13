@@ -7,8 +7,6 @@ public class UpdateUserBody extends Body {
     String displayName;
     String email;
     String username;
-    String oldPassword;
-    String password;
 
     public Long getId() {
         return id;
@@ -40,21 +38,5 @@ public class UpdateUserBody extends Body {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
     }
 }

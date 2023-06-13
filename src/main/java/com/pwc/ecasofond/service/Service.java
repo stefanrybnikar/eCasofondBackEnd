@@ -1,6 +1,8 @@
 package com.pwc.ecasofond.service;
 
+import com.pwc.ecasofond.repository.CompanyRepository;
 import com.pwc.ecasofond.request.body.Body;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 @Component

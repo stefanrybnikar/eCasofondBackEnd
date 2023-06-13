@@ -1,107 +1,143 @@
 package com.pwc.ecasofond;
 
+import com.pwc.ecasofond.configuration.RsaKeyProperties;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+@EnableConfigurationProperties(RsaKeyProperties.class)
 @SpringBootApplication
 public class ECasofondApplication {
+    private final String[] packagesToScan = {"com.pwc.ecasofond"};
+    private final String basicAuth = "basicAuth";
+    private final String bearerAuth = "bearerAuth";
+    private final Info apiInfo = new Info()
+            .version("0.6.9")
+            .description("ECasofond endpoint documentation");
+
     public static void main(String[] args) {
         SpringApplication.run(ECasofondApplication.class, args);
     }
 
-    private static final String VERSION = "0.6.0";
-    private static final String DESCRIPTION = "ECasofond endpoint documentation";
+    @Bean
+    public GroupedOpenApi authApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("auth")
+                .pathsToMatch("/auth/**")
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("Authentication endpoints"));
+                    openApi.getComponents().addSecuritySchemes(basicAuth, new SecurityScheme()
+                            .name(basicAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("basic"));
+                })
+                .build();
+    }
 
     @Bean
     public GroupedOpenApi companyApi() {
-        Info apiInfo = new Info()
-                .title("Company endpoints")
-                .version(VERSION)
-                .description(DESCRIPTION);
-
         return GroupedOpenApi
                 .builder()
                 .group("company")
                 .pathsToMatch("/company/**")
-                .addOpenApiCustomizer(openApi -> openApi.setInfo(apiInfo))
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("Company endpoints"));
+                    openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
+                            .name(bearerAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"));
+                })
                 .build();
     }
 
     @Bean
     public GroupedOpenApi employeeApi() {
-        Info apiInfo = new Info()
-                .title("User endpoints")
-                .version(VERSION)
-                .description(DESCRIPTION);
-
         return GroupedOpenApi
                 .builder()
                 .group("user")
                 .pathsToMatch("/user/**")
-                .addOpenApiCustomizer(openApi -> openApi.setInfo(apiInfo))
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("User endpoints"));
+                    openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
+                            .name(bearerAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"));
+                })
                 .build();
     }
 
     @Bean
     public GroupedOpenApi entryApi() {
-        Info apiInfo = new Info()
-                .title("Entry endpoints")
-                .version(VERSION)
-                .description(DESCRIPTION);
-
         return GroupedOpenApi
                 .builder()
                 .group("entry")
                 .pathsToMatch("/entry/**")
-                .addOpenApiCustomizer(openApi -> openApi.setInfo(apiInfo))
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("Entry endpoints"));
+                    openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
+                            .name(bearerAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"));
+                })
                 .build();
     }
 
     @Bean
     public GroupedOpenApi roleApi() {
-        Info apiInfo = new Info()
-                .title("Role endpoints")
-                .version(VERSION)
-                .description(DESCRIPTION);
-
         return GroupedOpenApi
                 .builder()
                 .group("role")
                 .pathsToMatch("/role/**")
-                .addOpenApiCustomizer(openApi -> openApi.setInfo(apiInfo))
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("Role endpoints"));
+                    openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
+                            .name(bearerAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"));
+                })
                 .build();
     }
 
     @Bean
     public GroupedOpenApi entryTypeApi() {
-        Info apiInfo = new Info()
-                .title("Entry type endpoints")
-                .version(VERSION)
-                .description(DESCRIPTION);
-
         return GroupedOpenApi
                 .builder()
                 .group("entry-type")
                 .pathsToMatch("/entry-type/**")
-                .addOpenApiCustomizer(openApi -> openApi.setInfo(apiInfo))
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("Entry type endpoints"));
+                    openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
+                            .name(bearerAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"));
+                })
                 .build();
     }
 
     @Bean
     public GroupedOpenApi professionApi() {
-        Info apiInfo = new Info()
-                .title("Profession endpoints")
-                .version(VERSION)
-                .description(DESCRIPTION);
-
         return GroupedOpenApi
                 .builder()
                 .group("profession")
                 .pathsToMatch("/profession/**")
-                .addOpenApiCustomizer(openApi -> openApi.setInfo(apiInfo))
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("Profession endpoints"));
+                    openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
+                            .name(bearerAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"));
+                })
                 .build();
     }
 }

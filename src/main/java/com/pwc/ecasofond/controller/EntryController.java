@@ -6,22 +6,26 @@ import com.pwc.ecasofond.request.body.update.UpdateEntryBody;
 import com.pwc.ecasofond.service.EntryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/entry")
+@Tag(name = "Entry")
 public class EntryController implements com.pwc.ecasofond.controller.Controller<Entry, AddEntryBody, UpdateEntryBody> {
-    @Autowired
-    private EntryService entryService;
+    private final EntryService entryService;
+
+    public EntryController(EntryService entryService) {
+        this.entryService = entryService;
+    }
 
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all entries")
-    public ResponseEntity<Iterable<Entry>> getAll()
-    {
+    public ResponseEntity<Iterable<Entry>> getAll() {
         return ResponseEntity.ok(entryService.getAll());
     }
 
@@ -54,7 +58,7 @@ public class EntryController implements com.pwc.ecasofond.controller.Controller<
     }
 
     @Override
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     @Operation(summary = "Updates an entry")
     public ResponseEntity<Entry> update(@RequestBody UpdateEntryBody requestBody) {
         Entry e = entryService.update(requestBody);

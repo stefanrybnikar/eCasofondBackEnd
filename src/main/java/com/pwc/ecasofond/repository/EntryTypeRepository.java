@@ -2,6 +2,9 @@ package com.pwc.ecasofond.repository;
 
 import com.pwc.ecasofond.model.EntryType;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface EntryTypeRepository  extends CrudRepository<EntryType, Long> {
+@Repository
+public interface EntryTypeRepository extends CrudRepository<EntryType, Long> {
+    Boolean existsByName(String name);
 }

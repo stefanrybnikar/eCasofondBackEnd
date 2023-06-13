@@ -2,16 +2,16 @@ package com.pwc.ecasofond.service;
 
 import com.pwc.ecasofond.model.Company;
 import com.pwc.ecasofond.repository.CompanyRepository;
-import com.pwc.ecasofond.request.body.Body;
 import com.pwc.ecasofond.request.body.add.AddCompanyBody;
 import com.pwc.ecasofond.request.body.update.UpdateCompanyBody;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+@org.springframework.stereotype.Service
 public class CompanyService implements Service<Company, AddCompanyBody, UpdateCompanyBody> {
-    @Autowired
-    private CompanyRepository companyRepository;
+    private final CompanyRepository companyRepository;
+
+    public CompanyService(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
+    }
 
     @Override
     public Iterable<Company> getAll() {
@@ -25,6 +25,9 @@ public class CompanyService implements Service<Company, AddCompanyBody, UpdateCo
 
     @Override
     public Company add(AddCompanyBody company) {
+        if (!companyRepository.existsByName(company.getName()))
+            return null;
+
         Company c = new Company();
         c.setName(company.getName());
         return companyRepository.save(c);
@@ -32,23 +35,24 @@ public class CompanyService implements Service<Company, AddCompanyBody, UpdateCo
 
     @Override
     public Company update(UpdateCompanyBody company) {
-        if (companyRepository.findById(company.getId()).isPresent()) {
-            Company c = companyRepository.findById(company.getId()).get();
-            c.setName(company.getName());
-            return companyRepository.save(c);
-        }
+        if (companyRepository.existsByName(company.getName()))
+            return null;
 
-        return null;
+        if (!companyRepository.existsById(company.getId()))
+            return null;
+
+        Company c = companyRepository.findById(company.getId()).get();
+        c.setName(company.getName());
+        return companyRepository.save(c);
     }
 
     @Override
     public Boolean delete(Long id) {
-        if (companyRepository.findById(id).isPresent()) {
-            Company company = companyRepository.findById(id).get();
-            companyRepository.delete(company);
-            return true;
-        }
+        if (!companyRepository.existsById(id))
+            return false;
 
-        return false;
+        Company company = companyRepository.findById(id).get();
+        companyRepository.delete(company);
+        return true;
     }
 }

@@ -6,16 +6,21 @@ import com.pwc.ecasofond.request.body.update.UpdateProfessionBody;
 import com.pwc.ecasofond.service.ProfessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/profession")
+@Tag(name = "Profession")
 public class ProfessionController implements com.pwc.ecasofond.controller.Controller<Profession, AddProfessionBody, UpdateProfessionBody> {
-    @Autowired
-    private ProfessionService professionService;
+    private final ProfessionService professionService;
+
+    public ProfessionController(ProfessionService professionService) {
+        this.professionService = professionService;
+    }
 
     @Override
     @GetMapping(path = "/all")
@@ -53,7 +58,7 @@ public class ProfessionController implements com.pwc.ecasofond.controller.Contro
     }
 
     @Override
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession")
     public ResponseEntity<Profession> update(@RequestBody UpdateProfessionBody requestBody) {
         Profession c = professionService.update(requestBody);

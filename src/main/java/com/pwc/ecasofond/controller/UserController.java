@@ -2,20 +2,26 @@ package com.pwc.ecasofond.controller;
 
 import com.pwc.ecasofond.model.User;
 import com.pwc.ecasofond.request.body.add.AddUserBody;
+import com.pwc.ecasofond.request.body.update.ResetUserPasswordBody;
 import com.pwc.ecasofond.request.body.update.UpdateUserBody;
 import com.pwc.ecasofond.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/user")
+@Tag(name = "Role")
 public class UserController implements com.pwc.ecasofond.controller.Controller<User, AddUserBody, UpdateUserBody> {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
 
     @Override
@@ -43,7 +49,7 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
 
     @Override
     @PostMapping(path = "/add")
-    @Operation(summary = "Adds a user")
+    @Operation(summary = "Adds an user")
     public ResponseEntity<User> add(@RequestBody AddUserBody requestBody) {
         User u = userService.add(requestBody);
 
@@ -54,7 +60,7 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
     }
 
     @Override
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     @Operation(summary = "Updates an user")
     public ResponseEntity<User> update(@RequestBody UpdateUserBody requestBody) {
         User u = userService.update(requestBody);
@@ -75,6 +81,19 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
             Long id
     ) {
         Boolean result = userService.delete(id);
+
+        if (!result)
+            return ResponseEntity.notFound().build();
+        else
+            return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/reset-password")
+    @Operation(summary = "Resets password of an user")
+    public ResponseEntity<Boolean> resetPassword(
+            @RequestBody ResetUserPasswordBody requestBody
+    ) {
+        Boolean result = userService.resetPassword(requestBody);
 
         if (!result)
             return ResponseEntity.notFound().build();

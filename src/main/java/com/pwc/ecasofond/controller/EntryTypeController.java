@@ -6,16 +6,21 @@ import com.pwc.ecasofond.request.body.update.UpdateEntryTypeBody;
 import com.pwc.ecasofond.service.EntryTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/entry-type")
-public class EntryTypeController implements com.pwc.ecasofond.controller.Controller<EntryType, AddEntryTypeBody, UpdateEntryTypeBody>{
-    @Autowired
-    private EntryTypeService entryTypeService;
+@Tag(name = "Entry Type")
+public class EntryTypeController implements com.pwc.ecasofond.controller.Controller<EntryType, AddEntryTypeBody, UpdateEntryTypeBody> {
+    private final EntryTypeService entryTypeService;
+
+    public EntryTypeController(EntryTypeService entryTypeService) {
+        this.entryTypeService = entryTypeService;
+    }
 
 
     @Override
@@ -54,7 +59,7 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     }
 
     @Override
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     @Operation(summary = "Updates an entry type")
     public ResponseEntity<EntryType> update(@RequestBody UpdateEntryTypeBody requestBody) {
         EntryType c = entryTypeService.update(requestBody);

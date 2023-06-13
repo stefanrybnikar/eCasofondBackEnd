@@ -6,16 +6,21 @@ import com.pwc.ecasofond.request.body.update.UpdateCompanyBody;
 import com.pwc.ecasofond.service.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/company")
+@Tag(name = "Company")
 public class CompanyController implements com.pwc.ecasofond.controller.Controller<Company, AddCompanyBody, UpdateCompanyBody> {
-    @Autowired
-    private CompanyService companyService;
+    private final CompanyService companyService;
+
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     @Override
     @GetMapping(path = "/all")
@@ -53,7 +58,7 @@ public class CompanyController implements com.pwc.ecasofond.controller.Controlle
     }
 
     @Override
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     @Operation(summary = "Updates a company")
     public ResponseEntity<Company> update(@RequestBody UpdateCompanyBody requestBody) {
         Company c = companyService.update(requestBody);

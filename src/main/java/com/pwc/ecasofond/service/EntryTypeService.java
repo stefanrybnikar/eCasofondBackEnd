@@ -4,13 +4,14 @@ import com.pwc.ecasofond.model.EntryType;
 import com.pwc.ecasofond.repository.EntryTypeRepository;
 import com.pwc.ecasofond.request.body.add.AddEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryTypeBody;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+@org.springframework.stereotype.Service
 public class EntryTypeService implements Service<EntryType, AddEntryTypeBody, UpdateEntryTypeBody> {
-    @Autowired
-    private EntryTypeRepository entryTypeRepository;
+    private final EntryTypeRepository entryTypeRepository;
+
+    public EntryTypeService(EntryTypeRepository entryTypeRepository) {
+        this.entryTypeRepository = entryTypeRepository;
+    }
 
     @Override
     public Iterable<EntryType> getAll() {
@@ -24,6 +25,9 @@ public class EntryTypeService implements Service<EntryType, AddEntryTypeBody, Up
 
     @Override
     public EntryType add(AddEntryTypeBody entryType) {
+        if (entryTypeRepository.existsByName(entryType.getName()))
+            return null;
+
         EntryType e = new EntryType();
         e.setName(entryType.getName());
         return entryTypeRepository.save(e);
@@ -31,23 +35,24 @@ public class EntryTypeService implements Service<EntryType, AddEntryTypeBody, Up
 
     @Override
     public EntryType update(UpdateEntryTypeBody entryType) {
-        if (entryTypeRepository.findById(entryType.getId()).isPresent()) {
-            EntryType e = entryTypeRepository.findById(entryType.getId()).get();
-            e.setName(entryType.getName());
-            return entryTypeRepository.save(e);
-        }
+        if (entryTypeRepository.existsByName(entryType.getName()))
+            return null;
 
-        return null;
+        if (!entryTypeRepository.existsById(entryType.getId()))
+            return null;
+
+        EntryType e = entryTypeRepository.findById(entryType.getId()).get();
+        e.setName(entryType.getName());
+        return entryTypeRepository.save(e);
     }
 
     @Override
     public Boolean delete(Long id) {
-        if (entryTypeRepository.findById(id).isPresent()) {
-            EntryType entryType = entryTypeRepository.findById(id).get();
-            entryTypeRepository.delete(entryType);
-            return true;
-        }
+        if (!entryTypeRepository.existsById(id))
+            return false;
 
-        return false;
+        EntryType entryType = entryTypeRepository.findById(id).get();
+        entryTypeRepository.delete(entryType);
+        return true;
     }
 }
