@@ -8,11 +8,14 @@ import com.pwc.ecasofond.repository.UserRepository;
 import com.pwc.ecasofond.request.body.add.AddUserBody;
 import com.pwc.ecasofond.request.body.update.ResetUserPasswordBody;
 import com.pwc.ecasofond.request.body.update.UpdateUserBody;
+import com.pwc.ecasofond.request.response.UserResponse;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import java.util.ArrayList;
+
 @org.springframework.stereotype.Service
-public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
+public class UserService implements Service<UserResponse, AddUserBody, UpdateUserBody, User> {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final RoleRepository roleRepository;
@@ -28,28 +31,43 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
     }
 
     @Override
-    public Iterable<User> getAll() {
+    public UserResponse convertToResponse(User user) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(user.getId());
+        userResponse.setDisplayName(user.getDisplayName());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setUsername(user.getUsername());
+        userResponse.setCompanyId(user.getCompanyId());
+        userResponse.setProfessionTypeId(user.getProfessionTypeId());
+        userResponse.setRoleId(user.getRoleId());
+
+        return userResponse;
+    }
+
+    @Override
+    public Iterable<UserResponse> getAll() {
         Iterable<User> users = userRepository.findAll();
-        // strip out the password field
+
+        ArrayList<UserResponse> response = new ArrayList<>();
+
         for (User user : users) {
-            user.setPassword(null);
+            response.add(convertToResponse(user));
         }
 
-        return users;
+        return response;
     }
 
     @Override
-    public User get(Long id) {
+    public UserResponse get(Long id) {
         User user = userRepository.findById(id).orElse(null);
-        // strip out the password field
-        if (user != null) {
-            user.setPassword(null);
-        }
-        return user;
+        if (user == null)
+            return null;
+
+        return convertToResponse(user);
     }
 
     @Override
-    public User add(AddUserBody user) {
+    public UserResponse add(AddUserBody user) {
         if (userRepository.existsByEmail(user.getEmail()))
             return null;
 
@@ -62,7 +80,7 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
         if (!roleRepository.existsById(user.getRoleId()))
             return null;
 
-        if (!professionTypeRepository.existsById(user.getProfessionId()))
+        if (!professionTypeRepository.existsById(user.getProfessionTypeId()))
             return null;
 
         User u = new User();
@@ -70,7 +88,7 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
         String encodedPassword = encoder.encode(user.getPassword());
         u.setCompanyId(user.getCompanyId());
         u.setRoleId(user.getRoleId());
-        u.setProfessionId(user.getProfessionId());
+        u.setProfessionTypeId(user.getProfessionTypeId());
         u.setDisplayName(user.getDisplayName());
         u.setEmail(user.getEmail());
         u.setUsername(user.getUsername());
@@ -84,11 +102,11 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
                         .build()
         );
 
-        return userRepository.save(u);
+        return convertToResponse(userRepository.save(u));
     }
 
     @Override
-    public User update(UpdateUserBody user) {
+    public UserResponse update(UpdateUserBody user) {
         if (!userRepository.existsById(user.getId()))
             return null;
 
@@ -102,7 +120,7 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
         u.setDisplayName(user.getDisplayName());
         u.setEmail(user.getEmail());
         u.setUsername(user.getUsername());
-        return userRepository.save(u);
+        return convertToResponse(userRepository.save(u));
     }
 
     @Override

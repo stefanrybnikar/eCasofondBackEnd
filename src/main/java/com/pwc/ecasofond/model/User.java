@@ -55,5 +55,5 @@ public class User {
     @Column(
             name = "profession_id"
     )
-    private Long professionId;
+    private Long professionTypeId;
 }

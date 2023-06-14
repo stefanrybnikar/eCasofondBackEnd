@@ -6,11 +6,13 @@ import com.pwc.ecasofond.repository.EntryTypeRepository;
 import com.pwc.ecasofond.repository.UserRepository;
 import com.pwc.ecasofond.request.body.add.AddEntryBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryBody;
+import com.pwc.ecasofond.request.response.EntryResponse;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 @org.springframework.stereotype.Service
-public class EntryService implements Service<Entry, AddEntryBody, UpdateEntryBody> {
+public class EntryService implements Service<EntryResponse, AddEntryBody, UpdateEntryBody, Entry> {
     private final EntryRepository entryRepository;
     private final UserRepository userRepository;
     private final EntryTypeRepository entryTypeRepository;
@@ -21,18 +23,42 @@ public class EntryService implements Service<Entry, AddEntryBody, UpdateEntryBod
         this.entryTypeRepository = entryTypeRepository;
     }
 
-    @Override
-    public Iterable<Entry> getAll() {
-        return entryRepository.findAll();
+    public EntryResponse convertToResponse(Entry entry) {
+        EntryResponse entryResponse = new EntryResponse();
+        entryResponse.setId(entry.getId());
+        entryResponse.setUserId(entry.getUserId());
+        entryResponse.setTypeId(entry.getTypeId());
+        entryResponse.setDescription(entry.getDescription());
+        entryResponse.setHourCount(entry.getHourCount());
+        entryResponse.setCreated(entry.getCreated());
+        entryResponse.setUpdated(entry.getUpdated());
+        return entryResponse;
     }
 
     @Override
-    public Entry get(Long id) {
-        return entryRepository.findById(id).orElse(null);
+    public Iterable<EntryResponse> getAll() {
+        Iterable<Entry> entries = entryRepository.findAll();
+        ArrayList<EntryResponse> entryResponses = new ArrayList<>();
+
+        for (Entry entry : entries) {
+            entryResponses.add(convertToResponse(entry));
+        }
+
+        return entryResponses;
     }
 
     @Override
-    public Entry add(AddEntryBody entry) {
+    public EntryResponse get(Long id) {
+        Entry e = entryRepository.findById(id).orElse(null);
+
+        if (e == null)
+            return null;
+
+        return convertToResponse(e);
+    }
+
+    @Override
+    public EntryResponse add(AddEntryBody entry) {
         if (!userRepository.existsById(entry.getUserId()))
             return null;
 
@@ -47,11 +73,11 @@ public class EntryService implements Service<Entry, AddEntryBody, UpdateEntryBod
         Timestamp now = new Timestamp(System.currentTimeMillis());
         e.setCreated(now);
         e.setUpdated(now);
-        return entryRepository.save(e);
+        return convertToResponse(entryRepository.save(e));
     }
 
     @Override
-    public Entry update(UpdateEntryBody entry) {
+    public EntryResponse update(UpdateEntryBody entry) {
         if (!entryRepository.existsById(entry.getId()))
             return null;
 
@@ -63,7 +89,7 @@ public class EntryService implements Service<Entry, AddEntryBody, UpdateEntryBod
         e.setDescription(entry.getDescription());
         e.setHourCount(entry.getHourCount());
         e.setUpdated(new Timestamp(System.currentTimeMillis()));
-        return entryRepository.save(e);
+        return convertToResponse(entryRepository.save(e));
     }
 
     @Override

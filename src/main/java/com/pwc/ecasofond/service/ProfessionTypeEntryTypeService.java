@@ -4,9 +4,12 @@ import com.pwc.ecasofond.model.ProfessionTypeEntryType;
 import com.pwc.ecasofond.repository.ProfessionTypeEntryTypeRepository;
 import com.pwc.ecasofond.request.body.add.AddProfessionTypeEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateProfessionTypeEntryTypeBody;
+import com.pwc.ecasofond.request.response.ProfessionTypeEntryTypeResponse;
+
+import java.util.ArrayList;
 
 @org.springframework.stereotype.Service
-public class ProfessionTypeEntryTypeService implements Service<ProfessionTypeEntryType, AddProfessionTypeEntryTypeBody, UpdateProfessionTypeEntryTypeBody> {
+public class ProfessionTypeEntryTypeService implements Service<ProfessionTypeEntryTypeResponse, AddProfessionTypeEntryTypeBody, UpdateProfessionTypeEntryTypeBody, ProfessionTypeEntryType> {
     private final ProfessionTypeEntryTypeRepository professionTypeEntryTypeRepository;
 
     public ProfessionTypeEntryTypeService(ProfessionTypeEntryTypeRepository professionTypeEntryTypeRepository) {
@@ -14,35 +17,55 @@ public class ProfessionTypeEntryTypeService implements Service<ProfessionTypeEnt
     }
 
     @Override
-    public Iterable<ProfessionTypeEntryType> getAll() {
-        return professionTypeEntryTypeRepository.findAll();
+    public ProfessionTypeEntryTypeResponse convertToResponse(ProfessionTypeEntryType professionTypeEntryType) {
+        ProfessionTypeEntryTypeResponse professionTypeEntryTypeResponse = new ProfessionTypeEntryTypeResponse();
+        professionTypeEntryTypeResponse.setId(professionTypeEntryType.getId());
+        professionTypeEntryTypeResponse.setProfessionTypeId(professionTypeEntryType.getProfessionTypeId());
+        professionTypeEntryTypeResponse.setEntryTypeId(professionTypeEntryType.getEntryTypeId());
+        return professionTypeEntryTypeResponse;
     }
 
     @Override
-    public ProfessionTypeEntryType get(Long id) {
-        return professionTypeEntryTypeRepository.findById(id).orElse(null);
+    public Iterable<ProfessionTypeEntryTypeResponse> getAll() {
+        Iterable<ProfessionTypeEntryType> p = professionTypeEntryTypeRepository.findAll();
+        ArrayList<ProfessionTypeEntryTypeResponse> response = new ArrayList<>();
+
+        for (ProfessionTypeEntryType professionTypeEntryType : p) {
+            response.add(convertToResponse(professionTypeEntryType));
+        }
+
+        return response;
     }
 
     @Override
-    public ProfessionTypeEntryType add(AddProfessionTypeEntryTypeBody addProfessionTypeEntryTypeBody) {
-        if (professionTypeEntryTypeRepository.existsByProfessionIdAndEntryTypeId(addProfessionTypeEntryTypeBody.getProfessionId(), addProfessionTypeEntryTypeBody.getEntryTypeId()))
+    public ProfessionTypeEntryTypeResponse get(Long id) {
+        ProfessionTypeEntryType p = professionTypeEntryTypeRepository.findById(id).orElse(null);
+        if (p == null)
+            return null;
+
+        return convertToResponse(p);
+    }
+
+    @Override
+    public ProfessionTypeEntryTypeResponse add(AddProfessionTypeEntryTypeBody addProfessionTypeEntryTypeBody) {
+        if (professionTypeEntryTypeRepository.existsByProfessionTypeIdAndEntryTypeId(addProfessionTypeEntryTypeBody.getProfessionTypeId(), addProfessionTypeEntryTypeBody.getEntryTypeId()))
             return null;
 
         ProfessionTypeEntryType professionTypeEntryType = new ProfessionTypeEntryType();
-        professionTypeEntryType.setProfessionId(addProfessionTypeEntryTypeBody.getProfessionId());
+        professionTypeEntryType.setProfessionTypeId(addProfessionTypeEntryTypeBody.getProfessionTypeId());
         professionTypeEntryType.setEntryTypeId(addProfessionTypeEntryTypeBody.getEntryTypeId());
-        return professionTypeEntryTypeRepository.save(professionTypeEntryType);
+        return convertToResponse(professionTypeEntryTypeRepository.save(professionTypeEntryType));
     }
 
     @Override
-    public ProfessionTypeEntryType update(UpdateProfessionTypeEntryTypeBody updateProfessionTypeEntryTypeBody) {
-        if (professionTypeEntryTypeRepository.existsByProfessionIdAndEntryTypeId(updateProfessionTypeEntryTypeBody.getProfessionId(), updateProfessionTypeEntryTypeBody.getEntryTypeId()))
+    public ProfessionTypeEntryTypeResponse update(UpdateProfessionTypeEntryTypeBody updateProfessionTypeEntryTypeBody) {
+        if (professionTypeEntryTypeRepository.existsByProfessionTypeIdAndEntryTypeId(updateProfessionTypeEntryTypeBody.getProfessionTypeId(), updateProfessionTypeEntryTypeBody.getEntryTypeId()))
             return null;
 
         ProfessionTypeEntryType professionTypeEntryType = new ProfessionTypeEntryType();
-        professionTypeEntryType.setProfessionId(updateProfessionTypeEntryTypeBody.getProfessionId());
+        professionTypeEntryType.setProfessionTypeId(updateProfessionTypeEntryTypeBody.getProfessionTypeId());
         professionTypeEntryType.setEntryTypeId(updateProfessionTypeEntryTypeBody.getEntryTypeId());
-        return professionTypeEntryTypeRepository.save(professionTypeEntryType);
+        return convertToResponse(professionTypeEntryTypeRepository.save(professionTypeEntryType));
     }
 
     @Override

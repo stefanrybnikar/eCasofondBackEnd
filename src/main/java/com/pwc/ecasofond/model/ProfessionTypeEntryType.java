@@ -15,7 +15,7 @@ public class ProfessionTypeEntryType {
             name = "profession_type_id",
             nullable = false
     )
-    private Long professionId;
+    private Long professionTypeId;
 
     @Column(
             name = "entry_type_id",

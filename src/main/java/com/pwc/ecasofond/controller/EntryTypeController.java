@@ -3,6 +3,7 @@ package com.pwc.ecasofond.controller;
 import com.pwc.ecasofond.model.EntryType;
 import com.pwc.ecasofond.request.body.add.AddEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryTypeBody;
+import com.pwc.ecasofond.request.response.EntryTypeResponse;
 import com.pwc.ecasofond.service.EntryTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/entrytype")
 @Tag(name = "Entry Type")
-public class EntryTypeController implements com.pwc.ecasofond.controller.Controller<EntryType, AddEntryTypeBody, UpdateEntryTypeBody> {
+public class EntryTypeController implements com.pwc.ecasofond.controller.Controller<EntryTypeResponse, AddEntryTypeBody, UpdateEntryTypeBody> {
     private final EntryTypeService entryTypeService;
 
     public EntryTypeController(EntryTypeService entryTypeService) {
@@ -26,19 +27,19 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all entry types")
-    public ResponseEntity<Iterable<EntryType>> getAll() {
+    public ResponseEntity<Iterable<EntryTypeResponse>> getAll() {
         return ResponseEntity.ok(entryTypeService.getAll());
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets an entry type")
-    public ResponseEntity<EntryType> get(
+    public ResponseEntity<EntryTypeResponse> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry type")
             Long id
     ) {
-        EntryType c = entryTypeService.get(id);
+        EntryTypeResponse c = entryTypeService.get(id);
 
         if (c == null)
             return ResponseEntity.notFound().build();
@@ -49,8 +50,8 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an entry type")
-    public ResponseEntity<EntryType> add(@RequestBody AddEntryTypeBody requestBody) {
-        EntryType c = entryTypeService.add(requestBody);
+    public ResponseEntity<EntryTypeResponse> add(@RequestBody AddEntryTypeBody requestBody) {
+        EntryTypeResponse c = entryTypeService.add(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();
@@ -61,8 +62,8 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates an entry type")
-    public ResponseEntity<EntryType> update(@RequestBody UpdateEntryTypeBody requestBody) {
-        EntryType c = entryTypeService.update(requestBody);
+    public ResponseEntity<EntryTypeResponse> update(@RequestBody UpdateEntryTypeBody requestBody) {
+        EntryTypeResponse c = entryTypeService.update(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();

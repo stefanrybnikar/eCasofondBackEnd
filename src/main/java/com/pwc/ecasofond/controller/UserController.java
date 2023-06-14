@@ -4,6 +4,7 @@ import com.pwc.ecasofond.model.User;
 import com.pwc.ecasofond.request.body.add.AddUserBody;
 import com.pwc.ecasofond.request.body.update.ResetUserPasswordBody;
 import com.pwc.ecasofond.request.body.update.UpdateUserBody;
+import com.pwc.ecasofond.request.response.UserResponse;
 import com.pwc.ecasofond.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/user")
 @Tag(name = "Role")
-public class UserController implements com.pwc.ecasofond.controller.Controller<User, AddUserBody, UpdateUserBody> {
+public class UserController implements com.pwc.ecasofond.controller.Controller<UserResponse, AddUserBody, UpdateUserBody> {
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -27,19 +28,19 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all users")
-    public ResponseEntity<Iterable<User>> getAll() {
+    public ResponseEntity<Iterable<UserResponse>> getAll() {
         return ResponseEntity.ok(userService.getAll());
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets an User")
-    public ResponseEntity<User> get(
+    public ResponseEntity<UserResponse> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of user")
             Long id
     ) {
-        User u = userService.get(id);
+        UserResponse u = userService.get(id);
 
         if (u == null)
             return ResponseEntity.notFound().build();
@@ -50,8 +51,8 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an user")
-    public ResponseEntity<User> add(@RequestBody AddUserBody requestBody) {
-        User u = userService.add(requestBody);
+    public ResponseEntity<UserResponse> add(@RequestBody AddUserBody requestBody) {
+        UserResponse u = userService.add(requestBody);
 
         if (u == null)
             return ResponseEntity.internalServerError().build();
@@ -62,8 +63,8 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates an user")
-    public ResponseEntity<User> update(@RequestBody UpdateUserBody requestBody) {
-        User u = userService.update(requestBody);
+    public ResponseEntity<UserResponse> update(@RequestBody UpdateUserBody requestBody) {
+        UserResponse u = userService.update(requestBody);
 
         if (u == null) {
             return ResponseEntity.notFound().build();

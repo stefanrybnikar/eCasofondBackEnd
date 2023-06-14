@@ -3,6 +3,7 @@ package com.pwc.ecasofond.controller;
 import com.pwc.ecasofond.model.Company;
 import com.pwc.ecasofond.request.body.add.AddCompanyBody;
 import com.pwc.ecasofond.request.body.update.UpdateCompanyBody;
+import com.pwc.ecasofond.request.response.CompanyResponse;
 import com.pwc.ecasofond.service.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/company")
 @Tag(name = "Company")
-public class CompanyController implements com.pwc.ecasofond.controller.Controller<Company, AddCompanyBody, UpdateCompanyBody> {
+public class CompanyController implements com.pwc.ecasofond.controller.Controller<CompanyResponse, AddCompanyBody, UpdateCompanyBody> {
     private final CompanyService companyService;
 
     public CompanyController(CompanyService companyService) {
@@ -25,19 +26,19 @@ public class CompanyController implements com.pwc.ecasofond.controller.Controlle
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all companies")
-    public ResponseEntity<Iterable<Company>> getAll() {
+    public ResponseEntity<Iterable<CompanyResponse>> getAll() {
         return ResponseEntity.ok(companyService.getAll());
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a company")
-    public ResponseEntity<Company> get(
+    public ResponseEntity<CompanyResponse> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of company")
             Long id
     ) {
-        Company c = companyService.get(id);
+        CompanyResponse c = companyService.get(id);
 
         if (c == null)
             return ResponseEntity.notFound().build();
@@ -48,8 +49,8 @@ public class CompanyController implements com.pwc.ecasofond.controller.Controlle
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a company")
-    public ResponseEntity<Company> add(@RequestBody AddCompanyBody requestBody) {
-        Company c = companyService.add(requestBody);
+    public ResponseEntity<CompanyResponse> add(@RequestBody AddCompanyBody requestBody) {
+        CompanyResponse c = companyService.add(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();
@@ -60,8 +61,8 @@ public class CompanyController implements com.pwc.ecasofond.controller.Controlle
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a company")
-    public ResponseEntity<Company> update(@RequestBody UpdateCompanyBody requestBody) {
-        Company c = companyService.update(requestBody);
+    public ResponseEntity<CompanyResponse> update(@RequestBody UpdateCompanyBody requestBody) {
+        CompanyResponse c = companyService.update(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();

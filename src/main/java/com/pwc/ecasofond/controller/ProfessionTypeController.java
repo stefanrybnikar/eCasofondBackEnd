@@ -3,6 +3,7 @@ package com.pwc.ecasofond.controller;
 import com.pwc.ecasofond.model.ProfessionType;
 import com.pwc.ecasofond.request.body.add.AddProfessionTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateProfessionTypeBody;
+import com.pwc.ecasofond.request.response.ProfessionTypeResponse;
 import com.pwc.ecasofond.service.ProfessionTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/professiontype")
 @Tag(name = "Profession")
-public class ProfessionTypeController implements com.pwc.ecasofond.controller.Controller<ProfessionType, AddProfessionTypeBody, UpdateProfessionTypeBody> {
+public class ProfessionTypeController implements com.pwc.ecasofond.controller.Controller<ProfessionTypeResponse, AddProfessionTypeBody, UpdateProfessionTypeBody> {
     private final ProfessionTypeService professionTypeService;
 
     public ProfessionTypeController(ProfessionTypeService professionTypeService) {
@@ -25,19 +26,19 @@ public class ProfessionTypeController implements com.pwc.ecasofond.controller.Co
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all professions")
-    public ResponseEntity<Iterable<ProfessionType>> getAll() {
+    public ResponseEntity<Iterable<ProfessionTypeResponse>> getAll() {
         return ResponseEntity.ok(professionTypeService.getAll());
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a profession")
-    public ResponseEntity<ProfessionType> get(
+    public ResponseEntity<ProfessionTypeResponse> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of profession")
             Long id
     ) {
-        ProfessionType c = professionTypeService.get(id);
+        ProfessionTypeResponse c = professionTypeService.get(id);
 
         if (c == null)
             return ResponseEntity.notFound().build();
@@ -48,8 +49,8 @@ public class ProfessionTypeController implements com.pwc.ecasofond.controller.Co
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a profession")
-    public ResponseEntity<ProfessionType> add(@RequestBody AddProfessionTypeBody requestBody) {
-        ProfessionType c = professionTypeService.add(requestBody);
+    public ResponseEntity<ProfessionTypeResponse> add(@RequestBody AddProfessionTypeBody requestBody) {
+        ProfessionTypeResponse c = professionTypeService.add(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();
@@ -60,8 +61,8 @@ public class ProfessionTypeController implements com.pwc.ecasofond.controller.Co
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession")
-    public ResponseEntity<ProfessionType> update(@RequestBody UpdateProfessionTypeBody requestBody) {
-        ProfessionType c = professionTypeService.update(requestBody);
+    public ResponseEntity<ProfessionTypeResponse> update(@RequestBody UpdateProfessionTypeBody requestBody) {
+        ProfessionTypeResponse c = professionTypeService.update(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();

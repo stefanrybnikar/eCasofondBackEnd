@@ -3,6 +3,7 @@ package com.pwc.ecasofond.controller;
 import com.pwc.ecasofond.model.ProfessionTypeEntryType;
 import com.pwc.ecasofond.request.body.add.AddProfessionTypeEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateProfessionTypeEntryTypeBody;
+import com.pwc.ecasofond.request.response.ProfessionTypeEntryTypeResponse;
 import com.pwc.ecasofond.service.ProfessionTypeEntryTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/professiontypeentrytype")
 @Tag(name = "Profession Type Entry Type")
-public class ProfessionTypeEntryTypeController implements Controller<ProfessionTypeEntryType, AddProfessionTypeEntryTypeBody, UpdateProfessionTypeEntryTypeBody> {
+public class ProfessionTypeEntryTypeController implements Controller<ProfessionTypeEntryTypeResponse, AddProfessionTypeEntryTypeBody, UpdateProfessionTypeEntryTypeBody> {
     private final ProfessionTypeEntryTypeService professionTypeEntryTypeService;
 
     public ProfessionTypeEntryTypeController(ProfessionTypeEntryTypeService professionTypeEntryTypeService) {
@@ -25,19 +26,19 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all profession type X entry type relations")
-    public ResponseEntity<Iterable<ProfessionTypeEntryType>> getAll() {
+    public ResponseEntity<Iterable<ProfessionTypeEntryTypeResponse>> getAll() {
         return ResponseEntity.ok(professionTypeEntryTypeService.getAll());
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a profession type X entry type relation")
-    public ResponseEntity<ProfessionTypeEntryType> get(
+    public ResponseEntity<ProfessionTypeEntryTypeResponse> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of profession type X entry type relation")
             Long id
     ) {
-        ProfessionTypeEntryType c = professionTypeEntryTypeService.get(id);
+        ProfessionTypeEntryTypeResponse c = professionTypeEntryTypeService.get(id);
         if (c == null)
             return ResponseEntity.notFound().build();
         else
@@ -47,8 +48,8 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a profession type X entry type relation")
-    public ResponseEntity<ProfessionTypeEntryType> add(AddProfessionTypeEntryTypeBody requestBody) {
-        ProfessionTypeEntryType c = professionTypeEntryTypeService.add(requestBody);
+    public ResponseEntity<ProfessionTypeEntryTypeResponse> add(AddProfessionTypeEntryTypeBody requestBody) {
+        ProfessionTypeEntryTypeResponse c = professionTypeEntryTypeService.add(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();
@@ -59,8 +60,8 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession type X entry type relation")
-    public ResponseEntity<ProfessionTypeEntryType> update(UpdateProfessionTypeEntryTypeBody requestBody) {
-        ProfessionTypeEntryType c = professionTypeEntryTypeService.update(requestBody);
+    public ResponseEntity<ProfessionTypeEntryTypeResponse> update(UpdateProfessionTypeEntryTypeBody requestBody) {
+        ProfessionTypeEntryTypeResponse c = professionTypeEntryTypeService.update(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();

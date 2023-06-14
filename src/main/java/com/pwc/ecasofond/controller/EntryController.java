@@ -3,6 +3,7 @@ package com.pwc.ecasofond.controller;
 import com.pwc.ecasofond.model.Entry;
 import com.pwc.ecasofond.request.body.add.AddEntryBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryBody;
+import com.pwc.ecasofond.request.response.EntryResponse;
 import com.pwc.ecasofond.service.EntryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/entry")
 @Tag(name = "Entry")
-public class EntryController implements com.pwc.ecasofond.controller.Controller<Entry, AddEntryBody, UpdateEntryBody> {
+public class EntryController implements com.pwc.ecasofond.controller.Controller<EntryResponse, AddEntryBody, UpdateEntryBody> {
     private final EntryService entryService;
 
     public EntryController(EntryService entryService) {
@@ -25,19 +26,19 @@ public class EntryController implements com.pwc.ecasofond.controller.Controller<
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all entries")
-    public ResponseEntity<Iterable<Entry>> getAll() {
+    public ResponseEntity<Iterable<EntryResponse>> getAll() {
         return ResponseEntity.ok(entryService.getAll());
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets and entry")
-    public ResponseEntity<Entry> get(
+    public ResponseEntity<EntryResponse> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry")
             Long id
     ) {
-        Entry e = entryService.get(id);
+        EntryResponse e = entryService.get(id);
 
         if (e == null)
             return ResponseEntity.notFound().build();
@@ -48,8 +49,8 @@ public class EntryController implements com.pwc.ecasofond.controller.Controller<
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an entry")
-    public ResponseEntity<Entry> add(@RequestBody AddEntryBody requestBody) {
-        Entry e = entryService.add(requestBody);
+    public ResponseEntity<EntryResponse> add(@RequestBody AddEntryBody requestBody) {
+        EntryResponse e = entryService.add(requestBody);
 
         if (e == null)
             return ResponseEntity.internalServerError().build();
@@ -60,8 +61,8 @@ public class EntryController implements com.pwc.ecasofond.controller.Controller<
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates an entry")
-    public ResponseEntity<Entry> update(@RequestBody UpdateEntryBody requestBody) {
-        Entry e = entryService.update(requestBody);
+    public ResponseEntity<EntryResponse> update(@RequestBody UpdateEntryBody requestBody) {
+        EntryResponse e = entryService.update(requestBody);
 
         if (e == null)
             return ResponseEntity.internalServerError().build();
