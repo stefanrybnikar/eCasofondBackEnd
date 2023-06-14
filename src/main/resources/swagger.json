@@ -3,7 +3,7 @@
   "info": {
     "title": "ECasofond REST API",
     "description": "Endpoints for the ECasofond project",
-    "version": "0.6.9"
+    "version": "0.8.1"
   },
   "servers": [
     {

@@ -15,7 +15,7 @@ public class ECasofondApplication {
     private final String basicAuth = "basicAuth";
     private final String bearerAuth = "bearerAuth";
     private final Info apiInfo = new Info()
-            .version("0.6.9")
+            .version("0.8.1")
             .description("ECasofond endpoint documentation");
 
     public static void main(String[] args) {
