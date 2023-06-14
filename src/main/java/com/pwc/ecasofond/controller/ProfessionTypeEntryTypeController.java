@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(path = "/professiontypeentrytype")
+@RequestMapping(path = "/v1/professiontypeentrytype")
 @Tag(name = "Profession Type Entry Type")
 public class ProfessionTypeEntryTypeController implements Controller<ProfessionTypeEntryTypeResponse, AddProfessionTypeEntryTypeBody, UpdateProfessionTypeEntryTypeBody> {
     private final ProfessionTypeEntryTypeService professionTypeEntryTypeService;

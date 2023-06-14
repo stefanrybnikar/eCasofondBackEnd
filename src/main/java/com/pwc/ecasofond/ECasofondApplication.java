@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigurationProperties(RsaKeyProperties.class)
 @SpringBootApplication
 public class ECasofondApplication {
-    private final String[] packagesToScan = {"com.pwc.ecasofond"};
     private final String basicAuth = "basicAuth";
     private final String bearerAuth = "bearerAuth";
     private final Info apiInfo = new Info()
@@ -23,6 +22,28 @@ public class ECasofondApplication {
         SpringApplication.run(ECasofondApplication.class, args);
     }
 
+    @Bean
+    public GroupedOpenApi v1Api() {
+        return GroupedOpenApi.builder()
+                .group("v1")
+                .pathsToMatch("/v1/**")
+                .addOpenApiCustomizer(
+                        openApi -> {
+                            openApi.setInfo(apiInfo.title("v1"));
+                            openApi.getComponents()
+                                    .addSecuritySchemes(basicAuth, new SecurityScheme()
+                                            .name(basicAuth)
+                                            .type(SecurityScheme.Type.HTTP)
+                                            .scheme("basic"))
+                                    .addSecuritySchemes(bearerAuth, new SecurityScheme()
+                                            .name(bearerAuth)
+                                            .type(SecurityScheme.Type.HTTP)
+                                            .scheme("bearer")
+                                            .bearerFormat("JWT"));
+                        })
+                .build();
+    }
+/*
     @Bean
     public GroupedOpenApi authApi() {
         return GroupedOpenApi
@@ -57,7 +78,7 @@ public class ECasofondApplication {
     }
 
     @Bean
-    public GroupedOpenApi employeeApi() {
+    public GroupedOpenApi userApi() {
         return GroupedOpenApi
                 .builder()
                 .group("user")
@@ -157,5 +178,5 @@ public class ECasofondApplication {
                             .bearerFormat("JWT"));
                 })
                 .build();
-    }
+    }*/
 }

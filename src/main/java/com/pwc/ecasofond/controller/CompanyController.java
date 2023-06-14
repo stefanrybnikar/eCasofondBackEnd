@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(path = "/company")
+@RequestMapping(path = "/v1/company")
 @Tag(name = "Company")
 public class CompanyController implements com.pwc.ecasofond.controller.Controller<CompanyResponse, AddCompanyBody, UpdateCompanyBody> {
     private final CompanyService companyService;

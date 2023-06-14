@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(path = "/professiontype")
+@RequestMapping(path = "/v1/professiontype")
 @Tag(name = "Profession")
 public class ProfessionTypeController implements com.pwc.ecasofond.controller.Controller<ProfessionTypeResponse, AddProfessionTypeBody, UpdateProfessionTypeBody> {
     private final ProfessionTypeService professionTypeService;

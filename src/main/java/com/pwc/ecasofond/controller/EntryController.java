@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(path = "/entry")
+@RequestMapping(path = "/v1/entry")
 @Tag(name = "Entry")
 public class EntryController implements com.pwc.ecasofond.controller.Controller<EntryResponse, AddEntryBody, UpdateEntryBody> {
     private final EntryService entryService;

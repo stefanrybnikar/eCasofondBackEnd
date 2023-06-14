@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(path = "/role")
+@RequestMapping(path = "/v1/role")
 @Tag(name = "Role")
 public class RoleController {
     private final RoleService roleService;

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SecurityRequirement(name = "basicAuth")
-@RequestMapping(path = "/auth")
+@RequestMapping(path = "/v1/auth")
 @Tag(name = "Auth")
 public class AuthController {
     private final UserRepository userRepository;
