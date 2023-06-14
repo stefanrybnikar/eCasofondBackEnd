@@ -2,7 +2,7 @@ package com.pwc.ecasofond.request.body.add;
 
 import com.pwc.ecasofond.request.body.Body;
 
-public class AddProfessionBody extends Body {
+public class AddProfessionTypeBody extends Body {
     String name;
 
     public String getName() {

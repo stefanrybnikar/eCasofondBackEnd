@@ -2,7 +2,7 @@ package com.pwc.ecasofond.service;
 
 import com.pwc.ecasofond.model.User;
 import com.pwc.ecasofond.repository.CompanyRepository;
-import com.pwc.ecasofond.repository.ProfessionRepository;
+import com.pwc.ecasofond.repository.ProfessionTypeRepository;
 import com.pwc.ecasofond.repository.RoleRepository;
 import com.pwc.ecasofond.repository.UserRepository;
 import com.pwc.ecasofond.request.body.add.AddUserBody;
@@ -16,14 +16,14 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final RoleRepository roleRepository;
-    private final ProfessionRepository professionRepository;
+    private final ProfessionTypeRepository professionTypeRepository;
     private final InMemoryUserDetailsManager inMemoryUserDetailsManager;
 
-    public UserService(UserRepository userRepository, CompanyRepository companyRepository, RoleRepository roleRepository, ProfessionRepository professionRepository, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository, RoleRepository roleRepository, ProfessionTypeRepository professionTypeRepository, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.roleRepository = roleRepository;
-        this.professionRepository = professionRepository;
+        this.professionTypeRepository = professionTypeRepository;
         this.inMemoryUserDetailsManager = inMemoryUserDetailsManager;
     }
 
@@ -62,7 +62,7 @@ public class UserService implements Service<User, AddUserBody, UpdateUserBody> {
         if (!roleRepository.existsById(user.getRoleId()))
             return null;
 
-        if (!professionRepository.existsById(user.getProfessionId()))
+        if (!professionTypeRepository.existsById(user.getProfessionId()))
             return null;
 
         User u = new User();

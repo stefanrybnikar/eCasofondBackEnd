@@ -2,7 +2,7 @@ package com.pwc.ecasofond.request.body.update;
 
 import com.pwc.ecasofond.request.body.Body;
 
-public class UpdateProfessionBody extends Body {
+public class UpdateProfessionTypeBody extends Body {
     Long id;
     String name;
 

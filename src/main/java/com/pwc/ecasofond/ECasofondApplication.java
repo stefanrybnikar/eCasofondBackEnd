@@ -111,8 +111,8 @@ public class ECasofondApplication {
     public GroupedOpenApi entryTypeApi() {
         return GroupedOpenApi
                 .builder()
-                .group("entry-type")
-                .pathsToMatch("/entry-type/**")
+                .group("entrytype")
+                .pathsToMatch("/entrytype/**")
                 .addOpenApiCustomizer(openApi -> {
                     openApi.setInfo(apiInfo.title("Entry type endpoints"));
                     openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
@@ -125,13 +125,31 @@ public class ECasofondApplication {
     }
 
     @Bean
-    public GroupedOpenApi professionApi() {
+    public GroupedOpenApi professionTypeApi() {
         return GroupedOpenApi
                 .builder()
-                .group("profession")
-                .pathsToMatch("/profession/**")
+                .group("professiontype")
+                .pathsToMatch("/professiontype/**")
                 .addOpenApiCustomizer(openApi -> {
-                    openApi.setInfo(apiInfo.title("Profession endpoints"));
+                    openApi.setInfo(apiInfo.title("Profession type endpoints"));
+                    openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
+                            .name(bearerAuth)
+                            .type(SecurityScheme.Type.HTTP)
+                            .scheme("bearer")
+                            .bearerFormat("JWT"));
+                })
+                .build();
+    }
+
+
+    @Bean
+    public GroupedOpenApi professionTypeEntryTypeApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("professiontypeentrytype")
+                .pathsToMatch("/professiontypeentrytype/**")
+                .addOpenApiCustomizer(openApi -> {
+                    openApi.setInfo(apiInfo.title("Profession type X entry type relation endpoints"));
                     openApi.getComponents().addSecuritySchemes(bearerAuth, new SecurityScheme()
                             .name(bearerAuth)
                             .type(SecurityScheme.Type.HTTP)

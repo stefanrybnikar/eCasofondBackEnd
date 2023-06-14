@@ -7,5 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
     Boolean existsByUsername(String username);
+
     Boolean existsByEmail(String email);
+
+    Boolean existsByUsernameAndPassword(String username, String password);
 }

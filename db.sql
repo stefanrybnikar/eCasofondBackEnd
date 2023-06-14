@@ -59,6 +59,15 @@ CREATE TABLE entries
     FOREIGN KEY (type_id) REFERENCES entry_types (id)
 );
 
+CREATE TABLE profession_types_entry_types
+(
+    id                 SERIAL PRIMARY KEY,
+    profession_type_id BIGINT NOT NULL,
+    entry_type_id      BIGINT NOT NULL,
+    FOREIGN KEY (profession_type_id) REFERENCES profession_types (id),
+    FOREIGN KEY (entry_type_id) REFERENCES entry_types (id)
+);
+
 INSERT INTO role_types (name, level, write)
 VALUES ('ADVISOR', 0, TRUE),
        ('ADMIN', 1, TRUE),

@@ -1,9 +1,9 @@
 package com.pwc.ecasofond.controller;
 
-import com.pwc.ecasofond.model.Profession;
-import com.pwc.ecasofond.request.body.add.AddProfessionBody;
-import com.pwc.ecasofond.request.body.update.UpdateProfessionBody;
-import com.pwc.ecasofond.service.ProfessionService;
+import com.pwc.ecasofond.model.ProfessionType;
+import com.pwc.ecasofond.request.body.add.AddProfessionTypeBody;
+import com.pwc.ecasofond.request.body.update.UpdateProfessionTypeBody;
+import com.pwc.ecasofond.service.ProfessionTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -13,31 +13,31 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(path = "/profession")
+@RequestMapping(path = "/professiontype")
 @Tag(name = "Profession")
-public class ProfessionController implements com.pwc.ecasofond.controller.Controller<Profession, AddProfessionBody, UpdateProfessionBody> {
-    private final ProfessionService professionService;
+public class ProfessionTypeController implements com.pwc.ecasofond.controller.Controller<ProfessionType, AddProfessionTypeBody, UpdateProfessionTypeBody> {
+    private final ProfessionTypeService professionTypeService;
 
-    public ProfessionController(ProfessionService professionService) {
-        this.professionService = professionService;
+    public ProfessionTypeController(ProfessionTypeService professionTypeService) {
+        this.professionTypeService = professionTypeService;
     }
 
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all professions")
-    public ResponseEntity<Iterable<Profession>> getAll() {
-        return ResponseEntity.ok(professionService.getAll());
+    public ResponseEntity<Iterable<ProfessionType>> getAll() {
+        return ResponseEntity.ok(professionTypeService.getAll());
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a profession")
-    public ResponseEntity<Profession> get(
+    public ResponseEntity<ProfessionType> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of profession")
             Long id
     ) {
-        Profession c = professionService.get(id);
+        ProfessionType c = professionTypeService.get(id);
 
         if (c == null)
             return ResponseEntity.notFound().build();
@@ -48,8 +48,8 @@ public class ProfessionController implements com.pwc.ecasofond.controller.Contro
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a profession")
-    public ResponseEntity<Profession> add(@RequestBody AddProfessionBody requestBody) {
-        Profession c = professionService.add(requestBody);
+    public ResponseEntity<ProfessionType> add(@RequestBody AddProfessionTypeBody requestBody) {
+        ProfessionType c = professionTypeService.add(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();
@@ -60,8 +60,8 @@ public class ProfessionController implements com.pwc.ecasofond.controller.Contro
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession")
-    public ResponseEntity<Profession> update(@RequestBody UpdateProfessionBody requestBody) {
-        Profession c = professionService.update(requestBody);
+    public ResponseEntity<ProfessionType> update(@RequestBody UpdateProfessionTypeBody requestBody) {
+        ProfessionType c = professionTypeService.update(requestBody);
 
         if (c == null)
             return ResponseEntity.internalServerError().build();
@@ -77,7 +77,7 @@ public class ProfessionController implements com.pwc.ecasofond.controller.Contro
             @Parameter(description = "Id of profession")
             Long id
     ) {
-        Boolean result = professionService.delete(id);
+        Boolean result = professionTypeService.delete(id);
 
         if (!result)
             return ResponseEntity.notFound().build();
