@@ -57,7 +57,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     }
 
     @Override
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession type X entry type relation")
     public ResponseEntity<ProfessionTypeEntryType> update(UpdateProfessionTypeEntryTypeBody requestBody) {
         ProfessionTypeEntryType c = professionTypeEntryTypeService.update(requestBody);
@@ -69,7 +69,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     }
 
     @Override
-    @PostMapping(path = "/delete/{id}")
+    @DeleteMapping(path = "/delete/{id}")
     @Operation(summary = "Deletes a profession type X entry type relation")
     public ResponseEntity<Boolean> delete(
             @PathVariable(name = "id")
