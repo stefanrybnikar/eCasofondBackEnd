@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(path = "/v1/user")
-@Tag(name = "Role")
+@Tag(name = "User")
 public class UserController implements com.pwc.ecasofond.controller.Controller<UserResponse, AddUserBody, UpdateUserBody> {
     private final UserService userService;
 
