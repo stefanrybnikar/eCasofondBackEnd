@@ -60,7 +60,7 @@ public class ProfessionTypeService implements Service<ProfessionTypeResponse, Ad
         if (!professionTypeRepository.existsById(profession.getId()))
             return null;
 
-        if (!professionTypeRepository.existsByName(profession.getName()))
+        if (professionTypeRepository.existsByName(profession.getName()))
             return null;
 
         ProfessionType p = professionTypeRepository.findById(profession.getId()).get();
