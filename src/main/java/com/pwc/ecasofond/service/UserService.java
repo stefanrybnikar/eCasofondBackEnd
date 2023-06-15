@@ -110,10 +110,10 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
         if (!userRepository.existsById(user.getId()))
             return null;
 
-        if (!userRepository.existsByEmail(user.getEmail()))
+        if (userRepository.existsByEmail(user.getEmail()))
             return null;
 
-        if (!userRepository.existsByUsername(user.getUsername()))
+        if (userRepository.existsByUsername(user.getUsername()))
             return null;
 
         User u = userRepository.findById(user.getId()).get();
