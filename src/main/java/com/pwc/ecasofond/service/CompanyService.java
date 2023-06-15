@@ -44,7 +44,7 @@ public class CompanyService implements Service<CompanyResponse, AddCompanyBody, 
 
     @Override
     public CompanyResponse add(AddCompanyBody company) {
-        if (!companyRepository.existsByName(company.getName()))
+        if (companyRepository.existsByName(company.getName()))
             return null;
 
         Company c = new Company();
