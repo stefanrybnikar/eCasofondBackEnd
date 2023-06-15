@@ -4,7 +4,9 @@ import com.pwc.ecasofond.model.Company;
 import com.pwc.ecasofond.repository.CompanyRepository;
 import com.pwc.ecasofond.request.body.add.AddCompanyBody;
 import com.pwc.ecasofond.request.body.update.UpdateCompanyBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.CompanyResponse;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 
@@ -24,54 +26,102 @@ public class CompanyService implements Service<CompanyResponse, AddCompanyBody, 
     }
 
     @Override
-    public Iterable<CompanyResponse> getAll() {
+    public ApiResponse<Iterable<CompanyResponse>> getAll() {
         Iterable<Company> companies = companyRepository.findAll();
         ArrayList<CompanyResponse> responses = new ArrayList<>();
         for (Company company : companies) {
             responses.add(convertToResponse(company));
         }
-        return responses;
+
+        ApiResponse<Iterable<CompanyResponse>> response = new ApiResponse<>();
+        response.setData(responses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + responses.size() + " companies");
+
+        return response;
     }
 
     @Override
-    public CompanyResponse get(Long id) {
+    public ApiResponse<CompanyResponse> get(Long id) {
+        ApiResponse<CompanyResponse> response = new ApiResponse<>();
+
         Company c = companyRepository.findById(id).orElse(null);
-        if (c == null)
-            return null;
+        if (c == null) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Company not found");
+            return response;
+        }
 
-        return convertToResponse(c);
+        response.setData(convertToResponse(c));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Company found");
+
+        return response;
     }
 
     @Override
-    public CompanyResponse add(AddCompanyBody company) {
-        if (companyRepository.existsByName(company.getName()))
-            return null;
+    public ApiResponse<CompanyResponse> add(AddCompanyBody company) {
+        ApiResponse<CompanyResponse> response = new ApiResponse<>();
+
+        if (companyRepository.existsByName(company.getName())) {
+            response.setStatus(HttpStatus.CONFLICT);
+            response.setMessage("Company with this name already exists");
+            return response;
+        }
 
         Company c = new Company();
         c.setName(company.getName());
-        return convertToResponse(companyRepository.save(c));
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Company added");
+        response.setData(convertToResponse(companyRepository.save(c)));
+
+        return response;
     }
 
     @Override
-    public CompanyResponse update(UpdateCompanyBody company) {
-        if (companyRepository.existsByName(company.getName()))
-            return null;
+    public ApiResponse<CompanyResponse> update(UpdateCompanyBody company) {
+        ApiResponse<CompanyResponse> response = new ApiResponse<>();
 
-        if (!companyRepository.existsById(company.getId()))
-            return null;
+        if (companyRepository.existsByName(company.getName())) {
+            response.setStatus(HttpStatus.CONFLICT);
+            response.setMessage("Company with this name already exists");
+            return response;
+        }
+
+        if (!companyRepository.existsById(company.getId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Company not found");
+            return response;
+        }
 
         Company c = companyRepository.findById(company.getId()).get();
         c.setName(company.getName());
-        return convertToResponse(companyRepository.save(c));
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Company updated");
+        response.setData(convertToResponse(companyRepository.save(c)));
+
+        return response;
     }
 
     @Override
-    public Boolean delete(Long id) {
-        if (!companyRepository.existsById(id))
-            return false;
+    public ApiResponse<Boolean> delete(Long id) {
+        ApiResponse<Boolean> response = new ApiResponse<>();
+
+        if (!companyRepository.existsById(id)) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Company not found");
+            return response;
+        }
 
         Company company = companyRepository.findById(id).get();
         companyRepository.delete(company);
-        return true;
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Company deleted");
+        response.setData(true);
+
+        return response;
     }
 }

@@ -1,8 +1,8 @@
 package com.pwc.ecasofond.controller;
 
-import com.pwc.ecasofond.model.Company;
 import com.pwc.ecasofond.request.body.add.AddCompanyBody;
 import com.pwc.ecasofond.request.body.update.UpdateCompanyBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.CompanyResponse;
 import com.pwc.ecasofond.service.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,63 +26,53 @@ public class CompanyController implements com.pwc.ecasofond.controller.Controlle
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all companies")
-    public ResponseEntity<Iterable<CompanyResponse>> getAll() {
-        return ResponseEntity.ok(companyService.getAll());
+    public ResponseEntity<ApiResponse<Iterable<CompanyResponse>>> getAll() {
+        ApiResponse<Iterable<CompanyResponse>> result = companyService.getAll();
+
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a company")
-    public ResponseEntity<CompanyResponse> get(
+    public ResponseEntity<ApiResponse<CompanyResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of company")
             Long id
     ) {
-        CompanyResponse c = companyService.get(id);
+        ApiResponse<CompanyResponse> result = companyService.get(id);
 
-        if (c == null)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a company")
-    public ResponseEntity<CompanyResponse> add(@RequestBody AddCompanyBody requestBody) {
-        CompanyResponse c = companyService.add(requestBody);
+    public ResponseEntity<ApiResponse<CompanyResponse>> add(@RequestBody AddCompanyBody requestBody) {
+        ApiResponse<CompanyResponse> result = companyService.add(requestBody);
 
-        if (c == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a company")
-    public ResponseEntity<CompanyResponse> update(@RequestBody UpdateCompanyBody requestBody) {
-        CompanyResponse c = companyService.update(requestBody);
+    public ResponseEntity<ApiResponse<CompanyResponse>> update(@RequestBody UpdateCompanyBody requestBody) {
+        ApiResponse<CompanyResponse> result = companyService.update(requestBody);
 
-        if (c == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @DeleteMapping(path = "/delete/{id}")
     @Operation(summary = "Deletes a company")
-    public ResponseEntity<Boolean> delete(
+    public ResponseEntity<ApiResponse<Boolean>> delete(
             @PathVariable(name = "id")
             @Parameter(description = "Id of company")
             Long id
     ) {
-        Boolean result = companyService.delete(id);
+        ApiResponse<Boolean> result = companyService.delete(id);
 
-        if (!result)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok().build();
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 }

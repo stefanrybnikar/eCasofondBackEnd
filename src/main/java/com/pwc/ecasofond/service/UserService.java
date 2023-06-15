@@ -8,7 +8,9 @@ import com.pwc.ecasofond.repository.UserRepository;
 import com.pwc.ecasofond.request.body.add.AddUserBody;
 import com.pwc.ecasofond.request.body.update.ResetUserPasswordBody;
 import com.pwc.ecasofond.request.body.update.UpdateUserBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.UserResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
@@ -45,43 +47,75 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
     }
 
     @Override
-    public Iterable<UserResponse> getAll() {
+    public ApiResponse<Iterable<UserResponse>> getAll() {
+        ApiResponse<Iterable<UserResponse>> response = new ApiResponse<>();
+
         Iterable<User> users = userRepository.findAll();
 
-        ArrayList<UserResponse> response = new ArrayList<>();
+        ArrayList<UserResponse> userResponses = new ArrayList<>();
 
         for (User user : users) {
-            response.add(convertToResponse(user));
+            userResponses.add(convertToResponse(user));
         }
+
+        response.setData(userResponses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + userResponses.size() + " users");
 
         return response;
     }
 
     @Override
-    public UserResponse get(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null)
-            return null;
+    public ApiResponse<UserResponse> get(Long id) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
 
-        return convertToResponse(user);
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("User not found");
+            return response;
+        }
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("User found");
+        response.setData(convertToResponse(user));
+
+        return response;
     }
 
     @Override
-    public UserResponse add(AddUserBody user) {
-        if (userRepository.existsByEmail(user.getEmail()))
-            return null;
+    public ApiResponse<UserResponse> add(AddUserBody user) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
 
-        if (userRepository.existsByUsername(user.getUsername()))
-            return null;
+        if (userRepository.existsByEmail(user.getEmail())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Email already exists");
+            return response;
+        }
 
-        if (!companyRepository.existsById(user.getCompanyId()))
-            return null;
+        if (userRepository.existsByUsername(user.getUsername())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Username already exists");
+            return response;
+        }
 
-        if (!roleRepository.existsById(user.getRoleId()))
-            return null;
+        if (!companyRepository.existsById(user.getCompanyId())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Company not found");
+            return response;
+        }
 
-        if (!professionTypeRepository.existsById(user.getProfessionTypeId()))
-            return null;
+        if (!roleRepository.existsById(user.getRoleId())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Role not found");
+            return response;
+        }
+
+        if (!professionTypeRepository.existsById(user.getProfessionTypeId())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Profession type not found");
+            return response;
+        }
 
         User u = new User();
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -102,43 +136,81 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
                         .build()
         );
 
-        return convertToResponse(userRepository.save(u));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("User created");
+        response.setData(convertToResponse(userRepository.save(u)));
+
+        return response;
     }
 
     @Override
-    public UserResponse update(UpdateUserBody user) {
-        if (!userRepository.existsById(user.getId()))
-            return null;
+    public ApiResponse<UserResponse> update(UpdateUserBody user) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
 
-        if (userRepository.existsByEmail(user.getEmail()))
-            return null;
+        if (!userRepository.existsById(user.getId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("User not found");
+            return response;
+        }
 
-        if (userRepository.existsByUsername(user.getUsername()))
-            return null;
+        if (userRepository.existsByEmail(user.getEmail())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Email already exists");
+            return response;
+        }
+
+        if (userRepository.existsByUsername(user.getUsername())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Username already exists");
+            return response;
+        }
 
         User u = userRepository.findById(user.getId()).get();
         u.setDisplayName(user.getDisplayName());
         u.setEmail(user.getEmail());
         u.setUsername(user.getUsername());
-        return convertToResponse(userRepository.save(u));
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("User updated");
+        response.setData(convertToResponse(userRepository.save(u)));
+
+        return response;
     }
 
     @Override
-    public Boolean delete(Long id) {
-        if (!userRepository.existsById(id))
-            return false;
+    public ApiResponse<Boolean> delete(Long id) {
+        ApiResponse<Boolean> response = new ApiResponse<>();
+
+        if (!userRepository.existsById(id)) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("User not found");
+            return response;
+        }
 
         User employee = userRepository.findById(id).get();
         userRepository.delete(employee);
-        return true;
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("User deleted");
+        response.setData(true);
+
+        return response;
     }
 
-    public Boolean resetPassword(ResetUserPasswordBody requestBody) {
-        if (!userRepository.existsById(requestBody.getId()))
-            return false;
+    public ApiResponse<Boolean> resetPassword(ResetUserPasswordBody requestBody) {
+        ApiResponse<Boolean> response = new ApiResponse<>();
 
-        if (!requestBody.getOldPassword().equals(requestBody.getNewPassword()))
-            return false;
+        if (!userRepository.existsById(requestBody.getId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("User not found");
+            return response;
+        }
+
+        if (!requestBody.getOldPassword().equals(requestBody.getNewPassword())) {
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            response.setMessage("Passwords do not match");
+            return response;
+        }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(requestBody.getNewPassword());
@@ -146,6 +218,11 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
         User u = userRepository.findById(requestBody.getId()).get();
         u.setPassword(encodedPassword);
         userRepository.save(u);
-        return true;
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Password updated");
+        response.setData(true);
+
+        return response;
     }
 }

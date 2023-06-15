@@ -2,12 +2,14 @@ package com.pwc.ecasofond.controller;
 
 import com.pwc.ecasofond.repository.UserRepository;
 import com.pwc.ecasofond.request.body.auth.LoginBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,13 +31,19 @@ public class AuthController {
 
     @PostMapping("/token")
     @Operation(summary = "When authenticated with username and password, returns a token")
-    public String token(Authentication authentication) {
-        return tokenService.generateToken(authentication);
+    public ResponseEntity<ApiResponse<String>> token(Authentication authentication) {
+        String token = tokenService.generateToken(authentication);
+
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setData(token);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Token generated");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/login")
     @Operation(summary = "When authenticated with username and password, returns true")
-    public Boolean login(@RequestBody LoginBody requestBody) {
+    public ResponseEntity<ApiResponse<Boolean>> login(@RequestBody LoginBody requestBody) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         String username = requestBody.getUsername();
@@ -43,12 +51,30 @@ public class AuthController {
 
         String passwordHash = encoder.encode(password);
 
-        return userRepository.existsByUsernameAndPassword(username, passwordHash);
+        Boolean success = userRepository.existsByUsernameAndPassword(username, passwordHash);
+
+        ApiResponse<Boolean> response = new ApiResponse<>();
+
+        if (success) {
+            response.setData(true);
+            response.setStatus(HttpStatus.OK);
+            response.setMessage("Login successful");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            response.setData(false);
+            response.setStatus(HttpStatus.UNAUTHORIZED);
+            response.setMessage("Login failed");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 
     @PostMapping("/logout")
     @Operation(summary = "When authenticated with username and password, returns true")
-    public Boolean logout() {
-        return false;
+    public ResponseEntity<ApiResponse<Boolean>> logout() {
+        ApiResponse<Boolean> response = new ApiResponse<>();
+        response.setData(false);
+        response.setStatus(HttpStatus.NOT_IMPLEMENTED);
+        response.setMessage("Not implemented");
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(response);
     }
 }

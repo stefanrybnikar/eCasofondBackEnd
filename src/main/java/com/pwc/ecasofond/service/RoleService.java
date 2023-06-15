@@ -2,7 +2,9 @@ package com.pwc.ecasofond.service;
 
 import com.pwc.ecasofond.model.Role;
 import com.pwc.ecasofond.repository.RoleRepository;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.RoleResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,7 +24,8 @@ public class RoleService {
         return roleResponse;
     }
 
-    public Iterable<RoleResponse> getAll() {
+    public ApiResponse<Iterable<RoleResponse>> getAll() {
+        ApiResponse<Iterable<RoleResponse>> response = new ApiResponse<>();
         Iterable<Role> roles = roleRepository.findAll();
         ArrayList<RoleResponse> roleResponses = new ArrayList<>();
 
@@ -30,14 +33,27 @@ public class RoleService {
             roleResponses.add(convertToResponse(role));
         }
 
-        return roleResponses;
+        response.setData(roleResponses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + roleResponses.size() + " roles");
+
+        return response;
     }
 
-    public RoleResponse get(Long id) {
-        Role role = roleRepository.findById(id).orElse(null);
-        if (role == null)
-            return null;
+    public ApiResponse<RoleResponse> get(Long id) {
+        ApiResponse<RoleResponse> response = new ApiResponse<>();
 
-        return convertToResponse(role);
+        Role role = roleRepository.findById(id).orElse(null);
+        if (role == null) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Role not found");
+            return response;
+        }
+
+        response.setData(convertToResponse(role));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Role found");
+
+        return response;
     }
 }

@@ -1,8 +1,8 @@
 package com.pwc.ecasofond.controller;
 
-import com.pwc.ecasofond.model.Entry;
 import com.pwc.ecasofond.request.body.add.AddEntryBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.EntryResponse;
 import com.pwc.ecasofond.service.EntryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,63 +26,53 @@ public class EntryController implements com.pwc.ecasofond.controller.Controller<
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all entries")
-    public ResponseEntity<Iterable<EntryResponse>> getAll() {
-        return ResponseEntity.ok(entryService.getAll());
+    public ResponseEntity<ApiResponse<Iterable<EntryResponse>>> getAll() {
+        ApiResponse<Iterable<EntryResponse>> response = entryService.getAll();
+
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets and entry")
-    public ResponseEntity<EntryResponse> get(
+    public ResponseEntity<ApiResponse<EntryResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry")
             Long id
     ) {
-        EntryResponse e = entryService.get(id);
+        ApiResponse<EntryResponse> result = entryService.get(id);
 
-        if (e == null)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok(e);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an entry")
-    public ResponseEntity<EntryResponse> add(@RequestBody AddEntryBody requestBody) {
-        EntryResponse e = entryService.add(requestBody);
+    public ResponseEntity<ApiResponse<EntryResponse>> add(@RequestBody AddEntryBody requestBody) {
+        ApiResponse<EntryResponse> result = entryService.add(requestBody);
 
-        if (e == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(e);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates an entry")
-    public ResponseEntity<EntryResponse> update(@RequestBody UpdateEntryBody requestBody) {
-        EntryResponse e = entryService.update(requestBody);
+    public ResponseEntity<ApiResponse<EntryResponse>> update(@RequestBody UpdateEntryBody requestBody) {
+        ApiResponse<EntryResponse> result = entryService.update(requestBody);
 
-        if (e == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(e);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @DeleteMapping(path = "/delete/{id}")
     @Operation(summary = "Deletes an entry")
-    public ResponseEntity<Boolean> delete(
+    public ResponseEntity<ApiResponse<Boolean>> delete(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry")
             Long id
     ) {
-        Boolean result = entryService.delete(id);
+        ApiResponse<Boolean> result = entryService.delete(id);
 
-        if (!result)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok().build();
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 }

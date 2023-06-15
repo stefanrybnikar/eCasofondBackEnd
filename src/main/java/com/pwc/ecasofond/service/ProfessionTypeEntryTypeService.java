@@ -4,9 +4,12 @@ import com.pwc.ecasofond.model.ProfessionTypeEntryType;
 import com.pwc.ecasofond.repository.ProfessionTypeEntryTypeRepository;
 import com.pwc.ecasofond.request.body.add.AddProfessionTypeEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateProfessionTypeEntryTypeBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.ProfessionTypeEntryTypeResponse;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @org.springframework.stereotype.Service
 public class ProfessionTypeEntryTypeService implements Service<ProfessionTypeEntryTypeResponse, AddProfessionTypeEntryTypeBody, UpdateProfessionTypeEntryTypeBody, ProfessionTypeEntryType> {
@@ -26,54 +29,107 @@ public class ProfessionTypeEntryTypeService implements Service<ProfessionTypeEnt
     }
 
     @Override
-    public Iterable<ProfessionTypeEntryTypeResponse> getAll() {
+    public ApiResponse<Iterable<ProfessionTypeEntryTypeResponse>> getAll() {
+        ApiResponse<Iterable<ProfessionTypeEntryTypeResponse>> response = new ApiResponse<>();
+
         Iterable<ProfessionTypeEntryType> p = professionTypeEntryTypeRepository.findAll();
-        ArrayList<ProfessionTypeEntryTypeResponse> response = new ArrayList<>();
+        List<ProfessionTypeEntryTypeResponse> professionTypeEntryTypeResponses = new ArrayList<>();
 
         for (ProfessionTypeEntryType professionTypeEntryType : p) {
-            response.add(convertToResponse(professionTypeEntryType));
+            professionTypeEntryTypeResponses.add(convertToResponse(professionTypeEntryType));
         }
+
+        response.setData(professionTypeEntryTypeResponses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + professionTypeEntryTypeResponses.size() + " profession type entry types");
+
+        return response;
+
+    }
+
+    @Override
+    public ApiResponse<ProfessionTypeEntryTypeResponse> get(Long id) {
+        ApiResponse<ProfessionTypeEntryTypeResponse> response = new ApiResponse<>();
+
+        ProfessionTypeEntryType p = professionTypeEntryTypeRepository.findById(id).orElse(null);
+        if (p == null) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Profession type entry type not found");
+            return response;
+        }
+
+        response.setData(convertToResponse(p));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found profession type entry type");
 
         return response;
     }
 
     @Override
-    public ProfessionTypeEntryTypeResponse get(Long id) {
-        ProfessionTypeEntryType p = professionTypeEntryTypeRepository.findById(id).orElse(null);
-        if (p == null)
-            return null;
+    public ApiResponse<ProfessionTypeEntryTypeResponse> add(AddProfessionTypeEntryTypeBody addProfessionTypeEntryTypeBody) {
+        ApiResponse<ProfessionTypeEntryTypeResponse> response = new ApiResponse<>();
 
-        return convertToResponse(p);
-    }
-
-    @Override
-    public ProfessionTypeEntryTypeResponse add(AddProfessionTypeEntryTypeBody addProfessionTypeEntryTypeBody) {
-        if (professionTypeEntryTypeRepository.existsByProfessionTypeIdAndEntryTypeId(addProfessionTypeEntryTypeBody.getProfessionTypeId(), addProfessionTypeEntryTypeBody.getEntryTypeId()))
-            return null;
+        if (professionTypeEntryTypeRepository.existsByProfessionTypeIdAndEntryTypeId(addProfessionTypeEntryTypeBody.getProfessionTypeId(), addProfessionTypeEntryTypeBody.getEntryTypeId())) {
+            response.setStatus(HttpStatus.CONFLICT);
+            response.setMessage("Profession type entry type already exists");
+            return response;
+        }
 
         ProfessionTypeEntryType professionTypeEntryType = new ProfessionTypeEntryType();
         professionTypeEntryType.setProfessionTypeId(addProfessionTypeEntryTypeBody.getProfessionTypeId());
         professionTypeEntryType.setEntryTypeId(addProfessionTypeEntryTypeBody.getEntryTypeId());
-        return convertToResponse(professionTypeEntryTypeRepository.save(professionTypeEntryType));
+
+        response.setData(convertToResponse(professionTypeEntryTypeRepository.save(professionTypeEntryType)));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Profession type entry type added");
+
+        return response;
     }
 
     @Override
-    public ProfessionTypeEntryTypeResponse update(UpdateProfessionTypeEntryTypeBody updateProfessionTypeEntryTypeBody) {
-        if (professionTypeEntryTypeRepository.existsByProfessionTypeIdAndEntryTypeId(updateProfessionTypeEntryTypeBody.getProfessionTypeId(), updateProfessionTypeEntryTypeBody.getEntryTypeId()))
-            return null;
+    public ApiResponse<ProfessionTypeEntryTypeResponse> update(UpdateProfessionTypeEntryTypeBody updateProfessionTypeEntryTypeBody) {
+        ApiResponse<ProfessionTypeEntryTypeResponse> response = new ApiResponse<>();
 
-        ProfessionTypeEntryType professionTypeEntryType = new ProfessionTypeEntryType();
+        ProfessionTypeEntryType professionTypeEntryType = professionTypeEntryTypeRepository.findById(updateProfessionTypeEntryTypeBody.getId()).orElse(null);
+
+        if (professionTypeEntryType == null) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Profession type entry type not found");
+            return response;
+        }
+
+        if (professionTypeEntryTypeRepository.existsByProfessionTypeIdAndEntryTypeId(updateProfessionTypeEntryTypeBody.getProfessionTypeId(), updateProfessionTypeEntryTypeBody.getEntryTypeId())) {
+            response.setStatus(HttpStatus.CONFLICT);
+            response.setMessage("Profession type entry type already exists");
+            return response;
+        }
+
         professionTypeEntryType.setProfessionTypeId(updateProfessionTypeEntryTypeBody.getProfessionTypeId());
         professionTypeEntryType.setEntryTypeId(updateProfessionTypeEntryTypeBody.getEntryTypeId());
-        return convertToResponse(professionTypeEntryTypeRepository.save(professionTypeEntryType));
+
+        response.setData(convertToResponse(professionTypeEntryTypeRepository.save(professionTypeEntryType)));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Profession type entry type updated");
+
+        return response;
     }
 
     @Override
-    public Boolean delete(Long id) {
-        if (!professionTypeEntryTypeRepository.existsById(id))
-            return false;
+    public ApiResponse<Boolean> delete(Long id) {
+        ApiResponse<Boolean> response = new ApiResponse<>();
+
+        if (!professionTypeEntryTypeRepository.existsById(id)) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Profession type entry type not found");
+            return response;
+        }
 
         professionTypeEntryTypeRepository.deleteById(id);
-        return true;
+
+        response.setData(true);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Profession type entry type deleted");
+
+        return response;
     }
 }

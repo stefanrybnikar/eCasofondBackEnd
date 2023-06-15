@@ -1,8 +1,8 @@
 package com.pwc.ecasofond.controller;
 
-import com.pwc.ecasofond.model.EntryType;
 import com.pwc.ecasofond.request.body.add.AddEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryTypeBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.EntryTypeResponse;
 import com.pwc.ecasofond.service.EntryTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,63 +27,53 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all entry types")
-    public ResponseEntity<Iterable<EntryTypeResponse>> getAll() {
-        return ResponseEntity.ok(entryTypeService.getAll());
+    public ResponseEntity<ApiResponse<Iterable<EntryTypeResponse>>> getAll() {
+        ApiResponse<Iterable<EntryTypeResponse>> result = entryTypeService.getAll();
+
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets an entry type")
-    public ResponseEntity<EntryTypeResponse> get(
+    public ResponseEntity<ApiResponse<EntryTypeResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry type")
             Long id
     ) {
-        EntryTypeResponse c = entryTypeService.get(id);
+        ApiResponse<EntryTypeResponse> result = entryTypeService.get(id);
 
-        if (c == null)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an entry type")
-    public ResponseEntity<EntryTypeResponse> add(@RequestBody AddEntryTypeBody requestBody) {
-        EntryTypeResponse c = entryTypeService.add(requestBody);
+    public ResponseEntity<ApiResponse<EntryTypeResponse>> add(@RequestBody AddEntryTypeBody requestBody) {
+        ApiResponse<EntryTypeResponse> result = entryTypeService.add(requestBody);
 
-        if (c == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates an entry type")
-    public ResponseEntity<EntryTypeResponse> update(@RequestBody UpdateEntryTypeBody requestBody) {
-        EntryTypeResponse c = entryTypeService.update(requestBody);
+    public ResponseEntity<ApiResponse<EntryTypeResponse>> update(@RequestBody UpdateEntryTypeBody requestBody) {
+        ApiResponse<EntryTypeResponse> result = entryTypeService.update(requestBody);
 
-        if (c == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @DeleteMapping(path = "/delete/{id}")
     @Operation(summary = "Deletes an entry type")
-    public ResponseEntity<Boolean> delete(
+    public ResponseEntity<ApiResponse<Boolean>> delete(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry type")
             Long id
     ) {
-        Boolean result = entryTypeService.delete(id);
+        ApiResponse<Boolean> result = entryTypeService.delete(id);
 
-        if (!result)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok().build();
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 }

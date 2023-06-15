@@ -6,7 +6,9 @@ import com.pwc.ecasofond.repository.EntryTypeRepository;
 import com.pwc.ecasofond.repository.UserRepository;
 import com.pwc.ecasofond.request.body.add.AddEntryBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.EntryResponse;
+import org.springframework.http.HttpStatus;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -36,7 +38,8 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
     }
 
     @Override
-    public Iterable<EntryResponse> getAll() {
+    public ApiResponse<Iterable<EntryResponse>> getAll() {
+        ApiResponse<Iterable<EntryResponse>> response = new ApiResponse<>();
         Iterable<Entry> entries = entryRepository.findAll();
         ArrayList<EntryResponse> entryResponses = new ArrayList<>();
 
@@ -44,26 +47,45 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
             entryResponses.add(convertToResponse(entry));
         }
 
-        return entryResponses;
+        response.setData(entryResponses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + entryResponses.size() + " entries");
+
+        return response;
     }
 
     @Override
-    public EntryResponse get(Long id) {
+    public ApiResponse<EntryResponse> get(Long id) {
+        ApiResponse<EntryResponse> response = new ApiResponse<>();
         Entry e = entryRepository.findById(id).orElse(null);
 
-        if (e == null)
-            return null;
+        if (e == null) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Entry not found");
+            return response;
+        }
 
-        return convertToResponse(e);
+        response.setData(convertToResponse(e));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found entry");
+
+        return response;
     }
 
     @Override
-    public EntryResponse add(AddEntryBody entry) {
-        if (!userRepository.existsById(entry.getUserId()))
-            return null;
+    public ApiResponse<EntryResponse> add(AddEntryBody entry) {
+        ApiResponse<EntryResponse> response = new ApiResponse<>();
+        if (!userRepository.existsById(entry.getUserId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("User not found");
+            return response;
+        }
 
-        if (!entryTypeRepository.existsById(entry.getTypeId()))
-            return null;
+        if (!entryTypeRepository.existsById(entry.getTypeId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Entry type not found");
+            return response;
+        }
 
         Entry e = new Entry();
         e.setUserId(entry.getUserId());
@@ -73,32 +95,60 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
         Timestamp now = new Timestamp(System.currentTimeMillis());
         e.setCreated(now);
         e.setUpdated(now);
-        return convertToResponse(entryRepository.save(e));
+
+        response.setData(convertToResponse(entryRepository.save(e)));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Entry created");
+
+        return response;
     }
 
     @Override
-    public EntryResponse update(UpdateEntryBody entry) {
-        if (!entryRepository.existsById(entry.getId()))
-            return null;
+    public ApiResponse<EntryResponse> update(UpdateEntryBody entry) {
+        ApiResponse<EntryResponse> response = new ApiResponse<>();
 
-        if (!entryTypeRepository.existsById(entry.getTypeId()))
-            return null;
+        if (!entryRepository.existsById(entry.getId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Entry not found");
+            return response;
+        }
+
+        if (!entryTypeRepository.existsById(entry.getTypeId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Entry type not found");
+            return response;
+        }
 
         Entry e = entryRepository.findById(entry.getId()).get();
         e.setTypeId(entry.getTypeId());
         e.setDescription(entry.getDescription());
         e.setHourCount(entry.getHourCount());
         e.setUpdated(new Timestamp(System.currentTimeMillis()));
-        return convertToResponse(entryRepository.save(e));
+
+        response.setData(convertToResponse(entryRepository.save(e)));
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Entry updated");
+
+        return response;
     }
 
     @Override
-    public Boolean delete(Long id) {
-        if (!entryRepository.existsById(id))
-            return false;
+    public ApiResponse<Boolean> delete(Long id) {
+        ApiResponse<Boolean> response = new ApiResponse<>();
+
+        if (!entryRepository.existsById(id)) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Entry not found");
+            return response;
+        }
 
         Entry entry = entryRepository.findById(id).get();
         entryRepository.delete(entry);
-        return true;
+
+        response.setData(true);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Entry deleted");
+
+        return response;
     }
 }

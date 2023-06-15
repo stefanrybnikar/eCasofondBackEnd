@@ -1,8 +1,8 @@
 package com.pwc.ecasofond.controller;
 
-import com.pwc.ecasofond.model.ProfessionTypeEntryType;
 import com.pwc.ecasofond.request.body.add.AddProfessionTypeEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateProfessionTypeEntryTypeBody;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.ProfessionTypeEntryTypeResponse;
 import com.pwc.ecasofond.service.ProfessionTypeEntryTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,62 +26,52 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all profession type X entry type relations")
-    public ResponseEntity<Iterable<ProfessionTypeEntryTypeResponse>> getAll() {
-        return ResponseEntity.ok(professionTypeEntryTypeService.getAll());
+    public ResponseEntity<ApiResponse<Iterable<ProfessionTypeEntryTypeResponse>>> getAll() {
+        ApiResponse<Iterable<ProfessionTypeEntryTypeResponse>> result = professionTypeEntryTypeService.getAll();
+
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a profession type X entry type relation")
-    public ResponseEntity<ProfessionTypeEntryTypeResponse> get(
+    public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of profession type X entry type relation")
             Long id
     ) {
-        ProfessionTypeEntryTypeResponse c = professionTypeEntryTypeService.get(id);
-        if (c == null)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok(c);
+        ApiResponse<ProfessionTypeEntryTypeResponse> c = professionTypeEntryTypeService.get(id);
+
+        return ResponseEntity.status(c.getStatus()).body(c);
     }
 
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a profession type X entry type relation")
-    public ResponseEntity<ProfessionTypeEntryTypeResponse> add(AddProfessionTypeEntryTypeBody requestBody) {
-        ProfessionTypeEntryTypeResponse c = professionTypeEntryTypeService.add(requestBody);
+    public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> add(AddProfessionTypeEntryTypeBody requestBody) {
+        ApiResponse<ProfessionTypeEntryTypeResponse> c = professionTypeEntryTypeService.add(requestBody);
 
-        if (c == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(c.getStatus()).body(c);
     }
 
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession type X entry type relation")
-    public ResponseEntity<ProfessionTypeEntryTypeResponse> update(UpdateProfessionTypeEntryTypeBody requestBody) {
-        ProfessionTypeEntryTypeResponse c = professionTypeEntryTypeService.update(requestBody);
+    public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> update(UpdateProfessionTypeEntryTypeBody requestBody) {
+        ApiResponse<ProfessionTypeEntryTypeResponse> c = professionTypeEntryTypeService.update(requestBody);
 
-        if (c == null)
-            return ResponseEntity.internalServerError().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(c.getStatus()).body(c);
     }
 
     @Override
     @DeleteMapping(path = "/delete/{id}")
     @Operation(summary = "Deletes a profession type X entry type relation")
-    public ResponseEntity<Boolean> delete(
+    public ResponseEntity<ApiResponse<Boolean>> delete(
             @PathVariable(name = "id")
             @Parameter(description = "Id of profession type X entry type relation")
             Long id
     ) {
-        Boolean result = professionTypeEntryTypeService.delete(id);
-
-        if (!result)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok().build();
+        ApiResponse<Boolean> result = professionTypeEntryTypeService.delete(id);
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 }

@@ -1,6 +1,7 @@
 package com.pwc.ecasofond.controller;
 
 import com.pwc.ecasofond.model.Role;
+import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.RoleResponse;
 import com.pwc.ecasofond.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,22 +27,21 @@ public class RoleController {
 
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all roles")
-    public ResponseEntity<Iterable<RoleResponse>> getAll() {
-        return ResponseEntity.ok(roleService.getAll());
+    public ResponseEntity<ApiResponse<Iterable<RoleResponse>>> getAll() {
+        ApiResponse<Iterable<RoleResponse>> result = roleService.getAll();
+
+        return ResponseEntity.status(result.getStatus()).body(result);
     }
 
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a role")
-    public ResponseEntity<RoleResponse> get(
+    public ResponseEntity<ApiResponse<RoleResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of role")
             Long id
     ) {
-        RoleResponse c = roleService.get(id);
+        ApiResponse<RoleResponse> c = roleService.get(id);
 
-        if (c == null)
-            return ResponseEntity.notFound().build();
-        else
-            return ResponseEntity.ok(c);
+        return ResponseEntity.status(c.getStatus()).body(c);
     }
 }
