@@ -48,7 +48,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a profession type X entry type relation")
-    public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> add(AddProfessionTypeEntryTypeBody requestBody) {
+    public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> add(@RequestBody AddProfessionTypeEntryTypeBody requestBody) {
         ApiResponse<ProfessionTypeEntryTypeResponse> c = professionTypeEntryTypeService.add(requestBody);
 
         return ResponseEntity.status(c.getStatus()).body(c);
@@ -57,7 +57,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession type X entry type relation")
-    public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> update(UpdateProfessionTypeEntryTypeBody requestBody) {
+    public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> update(@RequestBody UpdateProfessionTypeEntryTypeBody requestBody) {
         ApiResponse<ProfessionTypeEntryTypeResponse> c = professionTypeEntryTypeService.update(requestBody);
 
         return ResponseEntity.status(c.getStatus()).body(c);
