@@ -43,39 +43,4 @@ public class AuthController {
         response.setMessage("Token generated");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
-    @PostMapping("/login")
-    @Operation(summary = "When authenticated with username and password, returns true")
-    public ResponseEntity<ApiResponse<Boolean>> login(@RequestBody LoginBody requestBody) {
-        String username = requestBody.getUsername();
-        String password = requestBody.getPassword();
-
-        String passwordHash = passwordEncoder.encode(password);
-
-        Boolean success = userRepository.existsByUsernameAndPassword(username, passwordHash);
-
-        ApiResponse<Boolean> response = new ApiResponse<>();
-
-        if (success) {
-            response.setData(true);
-            response.setStatus(HttpStatus.OK);
-            response.setMessage("Login successful");
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } else {
-            response.setData(false);
-            response.setStatus(HttpStatus.UNAUTHORIZED);
-            response.setMessage("Login failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-    }
-
-    @PostMapping("/logout")
-    @Operation(summary = "When authenticated with username and password, returns true")
-    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
-    public ResponseEntity<ApiResponse<Boolean>> logout() {
-        ApiResponse<Boolean> response = new ApiResponse<>();
-        response.setStatus(HttpStatus.NOT_IMPLEMENTED);
-        response.setMessage("Not implemented");
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(response);
-    }
 }
