@@ -116,8 +116,8 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
         e.setCreated(now);
         e.setUpdated(now);
         e.setDay(entry.getDay());
-
-        response.setData(convertToResponse(entryRepository.save(e)));
+        Entry ee = entryRepository.save(e);
+        response.setData(convertToResponse(ee));
         response.setStatus(HttpStatus.OK);
         response.setMessage("Entry created");
 
