@@ -10,12 +10,12 @@ public class AddProfessionTypeEntryTypeBody extends Body {
         return professionTypeId;
     }
 
-    public Long getEntryTypeId() {
-        return entryTypeId;
-    }
-
     public void setProfessionTypeId(Long professionTypeId) {
         this.professionTypeId = professionTypeId;
+    }
+
+    public Long getEntryTypeId() {
+        return entryTypeId;
     }
 
     public void setEntryTypeId(Long entryTypeId) {

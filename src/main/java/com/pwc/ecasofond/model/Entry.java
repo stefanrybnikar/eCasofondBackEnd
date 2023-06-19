@@ -6,6 +6,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -50,4 +51,10 @@ public class Entry {
             name = "updated"
     )
     private Timestamp updated;
+
+    @Column(
+            name = "day",
+            nullable = false
+    )
+    private Date day;
 }

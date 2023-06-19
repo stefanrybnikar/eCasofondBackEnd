@@ -72,6 +72,25 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
         return response;
     }
 
+    public ApiResponse<Iterable<EntryResponse>> getAllByUserId(Long id) {
+        ApiResponse<Iterable<EntryResponse>> response = new ApiResponse<>();
+        Iterable<Entry> entries = entryRepository.findAll();
+
+        ArrayList<EntryResponse> entryResponses = new ArrayList<>();
+
+        for (Entry entry : entries) {
+            if (id.equals(entry.getUserId())) {
+                entryResponses.add(convertToResponse(entry));
+            }
+        }
+
+        response.setData(entryResponses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + entryResponses.size() + " entries");
+
+        return response;
+    }
+
     @Override
     public ApiResponse<EntryResponse> add(AddEntryBody entry) {
         ApiResponse<EntryResponse> response = new ApiResponse<>();
@@ -95,6 +114,7 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
         Timestamp now = new Timestamp(System.currentTimeMillis());
         e.setCreated(now);
         e.setUpdated(now);
+        e.setDay(entry.getDay());
 
         response.setData(convertToResponse(entryRepository.save(e)));
         response.setStatus(HttpStatus.OK);
@@ -124,6 +144,7 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
         e.setDescription(entry.getDescription());
         e.setHourCount(entry.getHourCount());
         e.setUpdated(new Timestamp(System.currentTimeMillis()));
+        e.setDay(entry.getDay());
 
         response.setData(convertToResponse(entryRepository.save(e)));
         response.setStatus(HttpStatus.OK);

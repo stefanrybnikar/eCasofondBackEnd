@@ -1,9 +1,10 @@
 DROP TABLE IF EXISTS entries;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS companies;
-DROP TABLE IF EXISTS profession_types;
-DROP TABLE IF EXISTS entry_types;
 DROP TABLE IF EXISTS role_types;
+DROP TABLE IF EXISTS profession_types_entry_types;
+DROP TABLE IF EXISTS entry_types;
+DROP TABLE IF EXISTS profession_types;
 
 CREATE TABLE role_types
 (
@@ -53,8 +54,9 @@ CREATE TABLE entries
     type_id     BIGINT NOT NULL,
     description VARCHAR(255),
     hour_count  INT    NOT NULL,
-    created     TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    updated     TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    created     TIMESTAMPTZ     DEFAULT CURRENT_TIMESTAMP,
+    updated     TIMESTAMPTZ     DEFAULT CURRENT_TIMESTAMP,
+    day         DATE   NOT NULL DEFAULT CURRENT_DATE,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (type_id) REFERENCES entry_types (id)
 );
@@ -72,3 +74,23 @@ INSERT INTO role_types (name, level, write)
 VALUES ('ADVISOR', 0, TRUE),
        ('ADMIN', 1, TRUE),
        ('USER', 2, FALSE);
+
+INSERT INTO entry_types (name)
+VALUES ('WORK'),
+       ('VACATION'),
+       ('SICK'),
+       ('OTHER');
+
+INSERT INTO profession_types (name)
+VALUES ('IT'),
+       ('HR'),
+       ('SALES'),
+       ('MANAGEMENT'),
+       ('OTHER');
+
+INSERT INTO companies (name)
+VALUES ('COMPANY A'),
+       ('COMPANY B'),
+       ('COMPANY C'),
+       ('COMPANY D'),
+       ('COMPANY E');

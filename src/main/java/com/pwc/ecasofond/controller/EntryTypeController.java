@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +28,7 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all entry types")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<Iterable<EntryTypeResponse>>> getAll() {
         ApiResponse<Iterable<EntryTypeResponse>> result = entryTypeService.getAll();
 
@@ -36,6 +38,7 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets an entry type")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<EntryTypeResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry type")
@@ -49,6 +52,7 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an entry type")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<EntryTypeResponse>> add(@RequestBody AddEntryTypeBody requestBody) {
         ApiResponse<EntryTypeResponse> result = entryTypeService.add(requestBody);
 
@@ -58,6 +62,7 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates an entry type")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<EntryTypeResponse>> update(@RequestBody UpdateEntryTypeBody requestBody) {
         ApiResponse<EntryTypeResponse> result = entryTypeService.update(requestBody);
 
@@ -67,6 +72,7 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     @Override
     @DeleteMapping(path = "/delete/{id}")
     @Operation(summary = "Deletes an entry type")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<Boolean>> delete(
             @PathVariable(name = "id")
             @Parameter(description = "Id of entry type")

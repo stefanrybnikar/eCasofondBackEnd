@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,16 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@SecurityRequirement(name = "basicAuth")
 @RequestMapping(path = "/v1/auth")
 @Tag(name = "Auth")
+@SecurityRequirement(name = "basicAuth")
 public class AuthController {
     private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthController(UserRepository userRepository, TokenService tokenService) {
+    public AuthController(UserRepository userRepository, TokenService tokenService, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/token")
@@ -44,12 +47,10 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "When authenticated with username and password, returns true")
     public ResponseEntity<ApiResponse<Boolean>> login(@RequestBody LoginBody requestBody) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
         String username = requestBody.getUsername();
         String password = requestBody.getPassword();
 
-        String passwordHash = encoder.encode(password);
+        String passwordHash = passwordEncoder.encode(password);
 
         Boolean success = userRepository.existsByUsernameAndPassword(username, passwordHash);
 
@@ -70,9 +71,9 @@ public class AuthController {
 
     @PostMapping("/logout")
     @Operation(summary = "When authenticated with username and password, returns true")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<Boolean>> logout() {
         ApiResponse<Boolean> response = new ApiResponse<>();
-        response.setData(false);
         response.setStatus(HttpStatus.NOT_IMPLEMENTED);
         response.setMessage("Not implemented");
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(response);

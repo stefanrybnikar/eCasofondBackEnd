@@ -2,6 +2,8 @@ package com.pwc.ecasofond.request.response;
 
 public class ProfessionTypeEntryTypeResponse extends Response {
     private Long id;
+    private Long professionTypeId;
+    private Long entryTypeId;
 
     public Long getId() {
         return id;
@@ -26,7 +28,4 @@ public class ProfessionTypeEntryTypeResponse extends Response {
     public void setEntryTypeId(Long entryTypeId) {
         this.entryTypeId = entryTypeId;
     }
-
-    private Long professionTypeId;
-    private Long entryTypeId;
 }

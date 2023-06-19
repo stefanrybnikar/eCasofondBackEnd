@@ -1,5 +1,6 @@
 package com.pwc.ecasofond.request.response;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class EntryResponse extends Response {
@@ -10,6 +11,15 @@ public class EntryResponse extends Response {
     private Integer hourCount;
     private Timestamp created;
     private Timestamp updated;
+    private Date day;
+
+    public Date getDay() {
+        return day;
+    }
+
+    public void setDay(Date day) {
+        this.day = day;
+    }
 
     public Long getId() {
         return id;

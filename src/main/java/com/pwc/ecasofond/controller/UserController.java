@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,10 +25,10 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
         this.userService = userService;
     }
 
-
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all users")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<Iterable<UserResponse>>> getAll() {
         ApiResponse<Iterable<UserResponse>> result = userService.getAll();
 
@@ -37,6 +38,7 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets an User")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<UserResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of user")
@@ -50,6 +52,7 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an user")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN')")
     public ResponseEntity<ApiResponse<UserResponse>> add(@RequestBody AddUserBody requestBody) {
         ApiResponse<UserResponse> u = userService.add(requestBody);
 
@@ -59,6 +62,7 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates an user")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<UserResponse>> update(@RequestBody UpdateUserBody requestBody) {
         ApiResponse<UserResponse> u = userService.update(requestBody);
 
@@ -67,6 +71,7 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
 
     @Override
     @DeleteMapping(path = "/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     @Operation(summary = "Deletes an User")
     public ResponseEntity<ApiResponse<Boolean>> delete(
             @PathVariable(name = "id")
@@ -80,6 +85,7 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
 
     @PostMapping(path = "/reset-password")
     @Operation(summary = "Resets password of an user")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<Boolean>> resetPassword(
             @RequestBody ResetUserPasswordBody requestBody
     ) {

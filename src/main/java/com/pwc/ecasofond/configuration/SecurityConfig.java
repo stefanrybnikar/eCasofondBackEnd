@@ -1,6 +1,5 @@
 package com.pwc.ecasofond.configuration;
 
-
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -16,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -51,19 +51,18 @@ public class SecurityConfig {
             String roleName = roleRepository.findById(user.getRoleId()).get().getName();
             manager.createUser(
                     User.withUsername(user.getUsername())
-                            .password("{noop}" + user.getPassword())
+                            .password(user.getPassword())
                             .authorities(roleName)
                             .build()
             );
         }
 
-        // test user
+        // TODO: remove in production
         manager.createUser(
-                User.withUsername("user")
-                        .password("{noop}user")
-                        .authorities("USER")
-                        .build()
-        );
+                User.withUsername("advisor")
+                        .password(new BCryptPasswordEncoder().encode("advisor"))
+                        .authorities("ADVISOR")
+                        .build());
 
         return manager;
     }
@@ -107,5 +106,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

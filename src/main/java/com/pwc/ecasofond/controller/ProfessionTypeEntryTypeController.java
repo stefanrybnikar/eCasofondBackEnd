@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +27,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all profession type X entry type relations")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<Iterable<ProfessionTypeEntryTypeResponse>>> getAll() {
         ApiResponse<Iterable<ProfessionTypeEntryTypeResponse>> result = professionTypeEntryTypeService.getAll();
 
@@ -35,6 +37,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @GetMapping(path = "/{id}")
     @Operation(summary = "Gets a profession type X entry type relation")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> get(
             @PathVariable(name = "id")
             @Parameter(description = "Id of profession type X entry type relation")
@@ -48,6 +51,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds a profession type X entry type relation")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> add(@RequestBody AddProfessionTypeEntryTypeBody requestBody) {
         ApiResponse<ProfessionTypeEntryTypeResponse> c = professionTypeEntryTypeService.add(requestBody);
 
@@ -57,6 +61,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @PutMapping(path = "/update")
     @Operation(summary = "Updates a profession type X entry type relation")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<ProfessionTypeEntryTypeResponse>> update(@RequestBody UpdateProfessionTypeEntryTypeBody requestBody) {
         ApiResponse<ProfessionTypeEntryTypeResponse> c = professionTypeEntryTypeService.update(requestBody);
 
@@ -66,6 +71,7 @@ public class ProfessionTypeEntryTypeController implements Controller<ProfessionT
     @Override
     @DeleteMapping(path = "/delete/{id}")
     @Operation(summary = "Deletes a profession type X entry type relation")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ApiResponse<Boolean>> delete(
             @PathVariable(name = "id")
             @Parameter(description = "Id of profession type X entry type relation")

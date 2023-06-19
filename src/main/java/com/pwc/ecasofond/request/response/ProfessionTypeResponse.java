@@ -2,6 +2,7 @@ package com.pwc.ecasofond.request.response;
 
 public class ProfessionTypeResponse extends Response {
     private Long id;
+    private String name;
 
     public Long getId() {
         return id;
@@ -18,6 +19,4 @@ public class ProfessionTypeResponse extends Response {
     public void setName(String name) {
         this.name = name;
     }
-
-    private String name;
 }

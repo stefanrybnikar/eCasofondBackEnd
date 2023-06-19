@@ -5,6 +5,8 @@ import com.pwc.ecasofond.request.body.Body;
 public class UpdateProfessionTypeEntryTypeBody extends Body {
 
     Long id;
+    Long professionTypeId;
+    Long entryTypeId;
 
     public Long getId() {
         return id;
@@ -14,19 +16,16 @@ public class UpdateProfessionTypeEntryTypeBody extends Body {
         this.id = id;
     }
 
-    Long professionTypeId;
-    Long entryTypeId;
-
     public Long getProfessionTypeId() {
         return professionTypeId;
     }
 
-    public Long getEntryTypeId() {
-        return entryTypeId;
-    }
-
     public void setProfessionTypeId(Long professionTypeId) {
         this.professionTypeId = professionTypeId;
+    }
+
+    public Long getEntryTypeId() {
+        return entryTypeId;
     }
 
     public void setEntryTypeId(Long entryTypeId) {

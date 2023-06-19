@@ -12,6 +12,7 @@ import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.UserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import java.util.ArrayList;
@@ -23,13 +24,15 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
     private final RoleRepository roleRepository;
     private final ProfessionTypeRepository professionTypeRepository;
     private final InMemoryUserDetailsManager inMemoryUserDetailsManager;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, CompanyRepository companyRepository, RoleRepository roleRepository, ProfessionTypeRepository professionTypeRepository, InMemoryUserDetailsManager inMemoryUserDetailsManager) {
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository, RoleRepository roleRepository, ProfessionTypeRepository professionTypeRepository, InMemoryUserDetailsManager inMemoryUserDetailsManager, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
         this.roleRepository = roleRepository;
         this.professionTypeRepository = professionTypeRepository;
         this.inMemoryUserDetailsManager = inMemoryUserDetailsManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -118,8 +121,8 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
         }
 
         User u = new User();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(user.getPassword());
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        System.out.println(encodedPassword);
         u.setCompanyId(user.getCompanyId());
         u.setRoleId(user.getRoleId());
         u.setProfessionTypeId(user.getProfessionTypeId());
@@ -130,8 +133,9 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
 
 
         inMemoryUserDetailsManager.createUser(
-                org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
-                        .password("{noop}" + user.getPassword())
+                org.springframework.security.core.userdetails.User
+                        .withUsername(user.getUsername())
+                        .password(encodedPassword)
                         .authorities(roleRepository.findById(user.getRoleId()).get().getName())
                         .build()
         );
@@ -212,8 +216,7 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
             return response;
         }
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(requestBody.getNewPassword());
+        String encodedPassword = passwordEncoder.encode(requestBody.getNewPassword());
 
         User u = userRepository.findById(requestBody.getId()).get();
         u.setPassword(encodedPassword);

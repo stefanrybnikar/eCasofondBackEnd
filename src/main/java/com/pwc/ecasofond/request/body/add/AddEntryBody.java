@@ -2,12 +2,22 @@ package com.pwc.ecasofond.request.body.add;
 
 import com.pwc.ecasofond.request.body.Body;
 
+import java.sql.Date;
+
 public class AddEntryBody extends Body {
     Long userId;
     Long typeId;
     String description;
     Integer hourCount;
+    Date day;
 
+    public Date getDay() {
+        return day;
+    }
+
+    public void setDay(Date day) {
+        this.day = day;
+    }
 
     public Long getUserId() {
         return userId;
