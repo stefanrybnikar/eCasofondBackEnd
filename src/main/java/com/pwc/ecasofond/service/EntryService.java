@@ -34,6 +34,7 @@ public class EntryService implements Service<EntryResponse, AddEntryBody, Update
         entryResponse.setHourCount(entry.getHourCount());
         entryResponse.setCreated(entry.getCreated());
         entryResponse.setUpdated(entry.getUpdated());
+        entryResponse.setDay(entry.getDay());
         return entryResponse;
     }
 
