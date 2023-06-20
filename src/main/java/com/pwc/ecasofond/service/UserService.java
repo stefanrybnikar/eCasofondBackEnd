@@ -11,8 +11,8 @@ import com.pwc.ecasofond.request.body.update.UpdateUserBody;
 import com.pwc.ecasofond.request.response.ApiResponse;
 import com.pwc.ecasofond.request.response.UserResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import java.util.ArrayList;
@@ -194,6 +194,8 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
         User employee = userRepository.findById(id).get();
         userRepository.delete(employee);
 
+        inMemoryUserDetailsManager.deleteUser(employee.getUsername());
+
         response.setStatus(HttpStatus.OK);
         response.setMessage("User deleted");
         response.setData(true);
@@ -221,6 +223,9 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
         User u = userRepository.findById(requestBody.getId()).get();
         u.setPassword(encodedPassword);
         userRepository.save(u);
+
+        UserDetails userDetails = inMemoryUserDetailsManager.loadUserByUsername(u.getUsername());
+        inMemoryUserDetailsManager.updatePassword(userDetails, encodedPassword);
 
         response.setStatus(HttpStatus.OK);
         response.setMessage("Password updated");
