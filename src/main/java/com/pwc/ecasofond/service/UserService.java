@@ -119,11 +119,12 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
             return response;
         }
 
-        if (!companyRepository.existsById(user.getCompanyId())) {
-            response.setStatus(HttpStatus.BAD_REQUEST);
-            response.setMessage("Company not found");
-            return response;
-        }
+        if (user.getCompanyId() != null)
+            if (!companyRepository.existsById(user.getCompanyId())) {
+                response.setStatus(HttpStatus.BAD_REQUEST);
+                response.setMessage("Company not found");
+                return response;
+            }
 
         if (!roleRepository.existsById(user.getRoleId())) {
             response.setStatus(HttpStatus.BAD_REQUEST);
@@ -131,15 +132,15 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
             return response;
         }
 
-        if (!professionTypeRepository.existsById(user.getProfessionTypeId())) {
-            response.setStatus(HttpStatus.BAD_REQUEST);
-            response.setMessage("Profession type not found");
-            return response;
-        }
+        if (user.getProfessionTypeId() != null)
+            if (!professionTypeRepository.existsById(user.getProfessionTypeId())) {
+                response.setStatus(HttpStatus.BAD_REQUEST);
+                response.setMessage("Profession type not found");
+                return response;
+            }
 
         User u = new User();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
-        System.out.println(encodedPassword);
         u.setCompanyId(user.getCompanyId());
         u.setRoleId(user.getRoleId());
         u.setProfessionTypeId(user.getProfessionTypeId());
