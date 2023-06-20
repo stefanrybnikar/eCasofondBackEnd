@@ -49,6 +49,19 @@ public class UserController implements com.pwc.ecasofond.controller.Controller<U
         return ResponseEntity.status(u.getStatus()).body(u);
     }
 
+    @GetMapping(path = "/username/{username}")
+    @Operation(summary = "Gets an User by username")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
+    public ResponseEntity<ApiResponse<UserResponse>> getByUsername(
+            @PathVariable(name = "username")
+            @Parameter(description = "Username of user")
+            String username
+    ) {
+        ApiResponse<UserResponse> u = userService.getByUsername(username);
+
+        return ResponseEntity.status(u.getStatus()).body(u);
+    }
+
     @Override
     @PostMapping(path = "/add")
     @Operation(summary = "Adds an user")

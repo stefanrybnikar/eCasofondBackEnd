@@ -86,6 +86,23 @@ public class UserService implements Service<UserResponse, AddUserBody, UpdateUse
         return response;
     }
 
+    public ApiResponse<UserResponse> getByUsername(String username) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
+
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("User not found");
+            return response;
+        }
+
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("User found");
+        response.setData(convertToResponse(user));
+
+        return response;
+    }
+
     @Override
     public ApiResponse<UserResponse> add(AddUserBody user) {
         ApiResponse<UserResponse> response = new ApiResponse<>();
