@@ -66,8 +66,8 @@ CREATE TABLE profession_types_entry_types
     id                 SERIAL PRIMARY KEY,
     profession_type_id BIGINT NOT NULL,
     entry_type_id      BIGINT NOT NULL,
-    FOREIGN KEY (profession_type_id) REFERENCES profession_types (id),
-    FOREIGN KEY (entry_type_id) REFERENCES entry_types (id)
+    FOREIGN KEY (profession_type_id) REFERENCES profession_types (id) ON DELETE CASCADE,
+    FOREIGN KEY (entry_type_id) REFERENCES entry_types (id) ON DELETE CASCADE
 );
 
 INSERT INTO role_types (name, level, write)
@@ -94,3 +94,39 @@ VALUES ('COMPANY A'),
        ('COMPANY C'),
        ('COMPANY D'),
        ('COMPANY E');
+
+INSERT INTO profession_types_entry_types (profession_type_id, entry_type_id)
+VALUES (1, 1),
+       (1, 2),
+       (1, 3),
+       (1, 4),
+       (2, 1),
+       (2, 2),
+       (2, 3),
+       (2, 4),
+       (3, 1),
+       (3, 2),
+       (3, 3),
+       (3, 4),
+       (4, 1),
+       (4, 2),
+       (4, 3),
+       (4, 4);
+
+INSERT INTO entries (user_id, type_id, description, hour_count, day)
+VALUES (11, 1, 'Doing stuff', 8, '2023-06-23'),
+       (11, 2, 'Vacation', 8, '2023-06-26'),
+       (11, 2, 'Vacation', 8, '2023-06-27'),
+       (11, 2, 'Vacation', 8, '2023-06-28'),
+       (11, 3, 'Sick', 8, '2023-06-29'),
+       (11, 3, 'Sick', 8, '2023-06-30'),
+       (11, 3, 'Sick', 8, '2023-07-03'),
+       (11, 4, 'Other', 8, '2023-07-04');
+
+ALTER TABLE profession_types_entry_types
+    DROP CONSTRAINT profession_types_entry_types_profession_type_id_fkey,
+    DROP CONSTRAINT profession_types_entry_types_entry_type_id_fkey;
+
+ALTER TABLE profession_types_entry_types
+    ADD FOREIGN KEY (profession_type_id) REFERENCES profession_types (id) ON DELETE CASCADE,
+    ADD FOREIGN KEY (entry_type_id) REFERENCES entry_types (id) ON DELETE CASCADE;
