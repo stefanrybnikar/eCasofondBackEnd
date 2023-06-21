@@ -122,11 +122,3 @@ VALUES (11, 1, 'Doing stuff', 8, '2023-06-23'),
        (11, 3, 'Sick', 8, '2023-06-30'),
        (11, 3, 'Sick', 8, '2023-07-03'),
        (11, 4, 'Other', 8, '2023-07-04');
-
-ALTER TABLE profession_types_entry_types
-    DROP CONSTRAINT profession_types_entry_types_profession_type_id_fkey,
-    DROP CONSTRAINT profession_types_entry_types_entry_type_id_fkey;
-
-ALTER TABLE profession_types_entry_types
-    ADD FOREIGN KEY (profession_type_id) REFERENCES profession_types (id) ON DELETE CASCADE,
-    ADD FOREIGN KEY (entry_type_id) REFERENCES entry_types (id) ON DELETE CASCADE;
