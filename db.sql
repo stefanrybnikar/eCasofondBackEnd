@@ -163,6 +163,9 @@ $$
                (userid, 2, 'Vacation', 8, '2023-07-11'),
                (userid, 2, 'Vacation', 8, '2023-07-12'),
                (userid, 2, 'Vacation', 8, '2023-07-13'),
-               (userid, 2, 'Vacation', 8, '2023-07-14');
+               (userid, 2, 'Vacation', 8, '2023-07-14'),
+               (userid, 4, 'Other', 8, '2023-07-17'),
+               (userid, 4, 'Other', 8, '2023-07-18'),
+               (userid, 4, 'Other', 8, '2023-07-19');
     END
 $$;
