@@ -133,12 +133,36 @@ VALUES ('ADVISOR', 0, TRUE),
        ('ADMIN', 1, TRUE),
        ('USER', 2, FALSE);
 
-INSERT INTO entries (user_id, type_id, description, hour_count, day)
-VALUES (11, 1, 'Doing stuff', 8, '2023-06-23'),
-       (11, 2, 'Vacation', 8, '2023-06-26'),
-       (11, 2, 'Vacation', 8, '2023-06-27'),
-       (11, 2, 'Vacation', 8, '2023-06-28'),
-       (11, 3, 'Sick', 8, '2023-06-29'),
-       (11, 3, 'Sick', 8, '2023-06-30'),
-       (11, 3, 'Sick', 8, '2023-07-03'),
-       (11, 4, 'Other', 8, '2023-07-04');
+DO
+$$
+    DECLARE
+        userid BIGINT;
+    BEGIN
+        userid := (SELECT id FROM users WHERE username = 'user');
+
+        INSERT INTO entries (user_id, type_id, description, hour_count, day)
+        VALUES (userid, 1, 'Doing stuff', 8, '2023-06-14'),
+               (userid, 1, 'Doing stuff', 6, '2023-06-15'),
+               (userid, 1, 'Doing stuff', 7, '2023-06-16'),
+               (userid, 1, 'Doing stuff', 5, '2023-06-19'),
+               (userid, 1, 'Doing stuff', 8, '2023-06-20'),
+               (userid, 1, 'Doing stuff', 8, '2023-06-21'),
+               (userid, 1, 'Doing stuff', 5, '2023-06-22'),
+               (userid, 1, 'Doing stuff', 8, '2023-06-23'),
+               (userid, 2, 'Vacation', 8, '2023-06-26'),
+               (userid, 2, 'Vacation', 8, '2023-06-27'),
+               (userid, 2, 'Vacation', 8, '2023-06-28'),
+               (userid, 3, 'Sick', 8, '2023-06-29'),
+               (userid, 3, 'Sick', 8, '2023-06-30'),
+               (userid, 3, 'Sick', 8, '2023-07-03'),
+               (userid, 4, 'Other', 8, '2023-07-04'),
+               (userid, 1, 'Doing stuff', 7, '2023-07-05'),
+               (userid, 1, 'Doing stuff', 8, '2023-07-06'),
+               (userid, 1, 'Doing stuff', 5, '2023-07-07'),
+               (userid, 1, 'Doing stuff', 6, '2023-07-10'),
+               (userid, 2, 'Vacation', 8, '2023-07-11'),
+               (userid, 2, 'Vacation', 8, '2023-07-12'),
+               (userid, 2, 'Vacation', 8, '2023-07-13'),
+               (userid, 2, 'Vacation', 8, '2023-07-14');
+    END
+$$;
