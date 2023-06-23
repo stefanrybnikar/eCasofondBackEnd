@@ -4,6 +4,16 @@ public class ProfessionTypeResponse extends Response {
     private Long id;
     private String name;
 
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    private Long companyId;
+
     public Long getId() {
         return id;
     }

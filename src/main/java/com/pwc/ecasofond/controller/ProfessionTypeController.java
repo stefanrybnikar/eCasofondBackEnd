@@ -24,9 +24,22 @@ public class ProfessionTypeController implements com.pwc.ecasofond.controller.Co
         this.professionTypeService = professionTypeService;
     }
 
+    @GetMapping(path = "/company/{companyId}")
+    @Operation(summary = "Gets all profession types by company")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
+    public ResponseEntity<ApiResponse<Iterable<ProfessionTypeResponse>>> getAllByCompany(
+            @PathVariable(name = "companyId")
+            @Parameter(description = "Id of company")
+            Long companyId
+    ) {
+        ApiResponse<Iterable<ProfessionTypeResponse>> result = professionTypeService.getAllByCompanyId(companyId);
+
+        return ResponseEntity.status(result.getStatus()).body(result);
+    }
+
     @Override
     @GetMapping(path = "/all")
-    @Operation(summary = "Gets all professions")
+    @Operation(summary = "Gets all profession types")
     @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
     public ResponseEntity<ApiResponse<Iterable<ProfessionTypeResponse>>> getAll() {
         ApiResponse<Iterable<ProfessionTypeResponse>> result = professionTypeService.getAll();

@@ -1,6 +1,7 @@
 package com.pwc.ecasofond.service;
 
 import com.pwc.ecasofond.model.EntryType;
+import com.pwc.ecasofond.repository.CompanyRepository;
 import com.pwc.ecasofond.repository.EntryTypeRepository;
 import com.pwc.ecasofond.request.body.add.AddEntryTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateEntryTypeBody;
@@ -13,15 +14,35 @@ import java.util.ArrayList;
 @org.springframework.stereotype.Service
 public class EntryTypeService implements Service<EntryTypeResponse, AddEntryTypeBody, UpdateEntryTypeBody, EntryType> {
     private final EntryTypeRepository entryTypeRepository;
+    private final CompanyRepository companyRepository;
 
-    public EntryTypeService(EntryTypeRepository entryTypeRepository) {
+    public EntryTypeService(EntryTypeRepository entryTypeRepository, CompanyRepository companyRepository) {
         this.entryTypeRepository = entryTypeRepository;
+        this.companyRepository = companyRepository;
     }
 
     public EntryTypeResponse convertToResponse(EntryType entryType) {
         EntryTypeResponse response = new EntryTypeResponse();
         response.setId(entryType.getId());
         response.setName(entryType.getName());
+        response.setCompanyId(entryType.getCompanyId());
+        return response;
+    }
+
+    public ApiResponse<Iterable<EntryTypeResponse>> getAllByCompanyId(Long companyId) {
+        ApiResponse<Iterable<EntryTypeResponse>> response = new ApiResponse<>();
+
+        Iterable<EntryType> entryTypes = entryTypeRepository.findAllByCompanyId(companyId);
+        ArrayList<EntryTypeResponse> responses = new ArrayList<>();
+
+        for (EntryType entryType : entryTypes) {
+            responses.add(convertToResponse(entryType));
+        }
+
+        response.setData(responses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + responses.size() + " entry types");
+
         return response;
     }
 
@@ -71,8 +92,15 @@ public class EntryTypeService implements Service<EntryTypeResponse, AddEntryType
             return response;
         }
 
+        if (!companyRepository.existsById(entryType.getCompanyId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Company not found");
+            return response;
+        }
+
         EntryType e = new EntryType();
         e.setName(entryType.getName());
+        e.setCompanyId(entryType.getCompanyId());
 
         response.setData(convertToResponse(entryTypeRepository.save(e)));
         response.setStatus(HttpStatus.OK);
@@ -97,8 +125,15 @@ public class EntryTypeService implements Service<EntryTypeResponse, AddEntryType
             return response;
         }
 
+        if (!companyRepository.existsById(entryType.getCompanyId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Company not found");
+            return response;
+        }
+
         EntryType e = entryTypeRepository.findById(entryType.getId()).get();
         e.setName(entryType.getName());
+        e.setCompanyId(entryType.getCompanyId());
 
         response.setData(convertToResponse(entryTypeRepository.save(e)));
         response.setStatus(HttpStatus.OK);

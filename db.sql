@@ -1,10 +1,10 @@
 DROP TABLE IF EXISTS entries;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS companies;
 DROP TABLE IF EXISTS role_types;
 DROP TABLE IF EXISTS profession_types_entry_types;
 DROP TABLE IF EXISTS entry_types;
 DROP TABLE IF EXISTS profession_types;
+DROP TABLE IF EXISTS companies;
 
 CREATE TABLE role_types
 (
@@ -14,22 +14,26 @@ CREATE TABLE role_types
     write BOOLEAN      NOT NULL
 );
 
-CREATE TABLE entry_types
-(
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
-);
-
-CREATE TABLE profession_types
-(
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
-);
-
 CREATE TABLE companies
 (
     id   SERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL UNIQUE
+);
+
+CREATE TABLE entry_types
+(
+    id         SERIAL PRIMARY KEY,
+    company_id BIGINT       NOT NULL,
+    name       VARCHAR(255) NOT NULL,
+    FOREIGN KEY (company_id) REFERENCES companies (id)
+);
+
+CREATE TABLE profession_types
+(
+    id         SERIAL PRIMARY KEY,
+    company_id BIGINT       NOT NULL,
+    name       VARCHAR(255) NOT NULL,
+    FOREIGN KEY (company_id) REFERENCES companies (id)
 );
 
 CREATE TABLE users
@@ -70,30 +74,41 @@ CREATE TABLE profession_types_entry_types
     FOREIGN KEY (entry_type_id) REFERENCES entry_types (id) ON DELETE CASCADE
 );
 
-INSERT INTO role_types (name, level, write)
-VALUES ('ADVISOR', 0, TRUE),
-       ('ADMIN', 1, TRUE),
-       ('USER', 2, FALSE);
-
-INSERT INTO entry_types (name)
-VALUES ('WORK'),
-       ('VACATION'),
-       ('SICK'),
-       ('OTHER');
-
-INSERT INTO profession_types (name)
-VALUES ('IT'),
-       ('HR'),
-       ('SALES'),
-       ('MANAGEMENT'),
-       ('OTHER');
-
 INSERT INTO companies (name)
-VALUES ('COMPANY A'),
-       ('COMPANY B'),
-       ('COMPANY C'),
-       ('COMPANY D'),
-       ('COMPANY E');
+VALUES ('Apple'),
+       ('Microsoft'),
+       ('IBM'),
+       ('Amazon'),
+       ('Google');
+
+INSERT INTO profession_types (company_id, name)
+VALUES (1, 'IT'),
+       (1, 'HR'),
+       (1, 'SALES'),
+       (1, 'MANAGEMENT'),
+       (1, 'OTHER');
+
+INSERT INTO profession_types (company_id, name)
+VALUES (2, 'IT'),
+       (2, 'HR'),
+       (2, 'SALES'),
+       (2, 'MANAGEMENT'),
+       (2, 'OTHER');
+
+
+
+INSERT INTO entry_types (company_id, name)
+VALUES (1, 'WORK'),
+       (1, 'VACATION'),
+       (1, 'SICK'),
+       (1, 'OTHER');
+
+INSERT INTO entry_types (company_id, name)
+VALUES (2, 'WORK'),
+       (2, 'VACATION'),
+       (2, 'SICK'),
+       (2, 'OTHER');
+
 
 INSERT INTO profession_types_entry_types (profession_type_id, entry_type_id)
 VALUES (1, 1),
@@ -112,6 +127,11 @@ VALUES (1, 1),
        (4, 2),
        (4, 3),
        (4, 4);
+
+INSERT INTO role_types (name, level, write)
+VALUES ('ADVISOR', 0, TRUE),
+       ('ADMIN', 1, TRUE),
+       ('USER', 2, FALSE);
 
 INSERT INTO entries (user_id, type_id, description, hour_count, day)
 VALUES (11, 1, 'Doing stuff', 8, '2023-06-23'),

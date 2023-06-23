@@ -5,6 +5,16 @@ import com.pwc.ecasofond.request.body.Body;
 public class AddEntryTypeBody extends Body {
     String name;
 
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    Long companyId;
+
     public String getName() {
         return name;
     }

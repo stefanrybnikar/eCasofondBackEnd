@@ -25,6 +25,19 @@ public class EntryTypeController implements com.pwc.ecasofond.controller.Control
     }
 
 
+    @GetMapping(path = "/company/{companyId}")
+    @Operation(summary = "Gets all entry types by company")
+    @PreAuthorize("hasAnyAuthority('ADVISOR', 'ADMIN', 'USER')")
+    public ResponseEntity<ApiResponse<Iterable<EntryTypeResponse>>> getAllByCompany(
+            @PathVariable(name = "companyId")
+            @Parameter(description = "Id of company")
+            Long companyId
+    ) {
+        ApiResponse<Iterable<EntryTypeResponse>> result = entryTypeService.getAllByCompanyId(companyId);
+
+        return ResponseEntity.status(result.getStatus()).body(result);
+    }
+
     @Override
     @GetMapping(path = "/all")
     @Operation(summary = "Gets all entry types")

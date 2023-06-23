@@ -1,6 +1,7 @@
 package com.pwc.ecasofond.service;
 
 import com.pwc.ecasofond.model.ProfessionType;
+import com.pwc.ecasofond.repository.CompanyRepository;
 import com.pwc.ecasofond.repository.ProfessionTypeRepository;
 import com.pwc.ecasofond.request.body.add.AddProfessionTypeBody;
 import com.pwc.ecasofond.request.body.update.UpdateProfessionTypeBody;
@@ -13,16 +14,38 @@ import java.util.ArrayList;
 @org.springframework.stereotype.Service
 public class ProfessionTypeService implements Service<ProfessionTypeResponse, AddProfessionTypeBody, UpdateProfessionTypeBody, ProfessionType> {
     private final ProfessionTypeRepository professionTypeRepository;
+    private final CompanyRepository companyRepository;
 
-    public ProfessionTypeService(ProfessionTypeRepository professionTypeRepository) {
+    public ProfessionTypeService(ProfessionTypeRepository professionTypeRepository, CompanyRepository companyRepository) {
         this.professionTypeRepository = professionTypeRepository;
+        this.companyRepository = companyRepository;
     }
 
     public ProfessionTypeResponse convertToResponse(ProfessionType professionType) {
         ProfessionTypeResponse professionTypeResponse = new ProfessionTypeResponse();
         professionTypeResponse.setId(professionType.getId());
         professionTypeResponse.setName(professionType.getName());
+        professionTypeResponse.setCompanyId(professionType.getCompanyId());
         return professionTypeResponse;
+    }
+
+    public ApiResponse<Iterable<ProfessionTypeResponse>> getAllByCompanyId(
+            Long companyId
+    ) {
+        ApiResponse<Iterable<ProfessionTypeResponse>> response = new ApiResponse<>();
+
+        Iterable<ProfessionType> professionTypes = professionTypeRepository.findAllByCompanyId(companyId);
+        ArrayList<ProfessionTypeResponse> professionTypeResponses = new ArrayList<>();
+
+        for (ProfessionType professionType : professionTypes) {
+            professionTypeResponses.add(convertToResponse(professionType));
+        }
+
+        response.setData(professionTypeResponses);
+        response.setStatus(HttpStatus.OK);
+        response.setMessage("Found " + professionTypeResponses.size() + " profession types");
+
+        return response;
     }
 
     @Override
@@ -71,8 +94,15 @@ public class ProfessionTypeService implements Service<ProfessionTypeResponse, Ad
             return response;
         }
 
+        if (!companyRepository.existsById(profession.getCompanyId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Company not found");
+            return response;
+        }
+
         ProfessionType p = new ProfessionType();
         p.setName(profession.getName());
+        p.setCompanyId(profession.getCompanyId());
 
         response.setData(convertToResponse(professionTypeRepository.save(p)));
         response.setStatus(HttpStatus.OK);
@@ -97,8 +127,15 @@ public class ProfessionTypeService implements Service<ProfessionTypeResponse, Ad
             return response;
         }
 
+        if (!companyRepository.existsById(profession.getCompanyId())) {
+            response.setStatus(HttpStatus.NOT_FOUND);
+            response.setMessage("Company not found");
+            return response;
+        }
+
         ProfessionType p = professionTypeRepository.findById(profession.getId()).get();
         p.setName(profession.getName());
+        p.setCompanyId(profession.getCompanyId());
 
         response.setData(convertToResponse(professionTypeRepository.save(p)));
         response.setStatus(HttpStatus.OK);

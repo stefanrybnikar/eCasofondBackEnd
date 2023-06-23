@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProfessionTypeRepository extends CrudRepository<ProfessionType, Long> {
     Boolean existsByName(String name);
+    Iterable<ProfessionType> findAllByCompanyId(Long companyId);
 }
